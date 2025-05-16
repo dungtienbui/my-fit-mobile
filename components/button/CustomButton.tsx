@@ -23,7 +23,7 @@ interface ButtonProps {
   trailingIcon?: React.ReactNode;
 }
 
-const Button: React.FC<ButtonProps> = ({
+const CustomButton: React.FC<ButtonProps> = ({
   title,
   onPress,
   style,
@@ -66,4 +66,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Button;
+export default CustomButton;

@@ -1,4 +1,4 @@
-import Button from "@/components/button/Button";
+import CustomButton from "@/components/button/CustomButton";
 import { logout } from "@/store/features/auth/authSlice";
 import { Link } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
@@ -13,7 +13,7 @@ export default function Index() {
         Go to Home screen
       </Link>
 
-      <Button
+      <CustomButton
         title="Logout"
         onPress={() => {
           dispatch(logout());

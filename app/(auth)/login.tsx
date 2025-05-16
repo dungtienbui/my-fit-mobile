@@ -1,4 +1,4 @@
-import Button from "@/components/button/Button";
+import CustomButton from "@/components/button/CustomButton";
 import CustomInput from "@/components/form/CustomInput";
 import { setCredentials } from "@/store/features/auth/authSlice";
 import { useLoginMutation } from "@/store/services/authApi";
@@ -110,7 +110,7 @@ export default function Login() {
               >
                 Forgot password
               </Text>
-              <Button
+              <CustomButton
                 title="Đăng nhập"
                 onPress={handleLogin}
                 width="90%"
@@ -134,7 +134,7 @@ export default function Login() {
           <View style={styles.dividerBar}></View>
         </View>
         <View style={{ alignItems: "center", gap: 20 }}>
-          <Button
+          <CustomButton
             title="Đăng nhập bằng Google"
             onPress={() => {
               console.log("Login with google!");
