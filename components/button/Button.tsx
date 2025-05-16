@@ -3,12 +3,13 @@ import { colors } from "@/theme/colors";
 import { fonts } from "@/theme/fonts";
 import React from "react";
 import {
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  ViewStyle,
-  TextStyle,
   DimensionValue,
+  StyleSheet,
+  Text,
+  TextStyle,
+  TouchableOpacity,
+  View,
+  ViewStyle,
 } from "react-native";
 
 interface ButtonProps {
@@ -18,6 +19,8 @@ interface ButtonProps {
   textStyle?: TextStyle;
   isDisable?: boolean;
   width?: DimensionValue;
+  leadingIcon?: React.ReactNode;
+  trailingIcon?: React.ReactNode;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -27,6 +30,8 @@ const Button: React.FC<ButtonProps> = ({
   textStyle,
   isDisable,
   width = "80%",
+  leadingIcon,
+  trailingIcon,
 }) => {
   return (
     <TouchableOpacity
@@ -34,7 +39,9 @@ const Button: React.FC<ButtonProps> = ({
       onPress={onPress}
       disabled={isDisable === true}
     >
+      {leadingIcon && <View style={styles.iconContainer}>{leadingIcon}</View>}
       <Text style={[styles.text, textStyle]}>{title}</Text>
+      {trailingIcon && <View style={styles.iconContainer}>{trailingIcon}</View>}
     </TouchableOpacity>
   );
 };
@@ -45,11 +52,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 999,
     backgroundColor: colors.primary1,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignContent: "center",
   },
   text: {
     ...fonts.bodyLarge,
     color: "white",
     textAlign: "center",
+  },
+  iconContainer: {
+    marginHorizontal: 6,
   },
 });
 

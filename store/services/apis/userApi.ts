@@ -20,4 +20,4 @@ export const userApi = baseApi.injectEndpoints({
   overrideExisting: false, // Nếu đã có endpoint nào trùng thì không ghi đè
 });
 
-export const { useGetUserQuery } = userApi;
+export const { useGetUserQuery, useEditUserMutation } = userApi;

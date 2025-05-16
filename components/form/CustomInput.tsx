@@ -3,19 +3,17 @@ import { colors } from "@/theme/colors";
 import { fonts } from "@/theme/fonts";
 import React, { useState } from "react";
 import {
-  TextInput,
-  StyleSheet,
-  View,
-  Text,
-  ViewStyle,
-  TextStyle,
-  TouchableOpacity,
-  Image,
   DimensionValue,
+  StyleSheet,
+  Text,
+  TextInput,
+  TextStyle,
+  View,
+  ViewStyle,
 } from "react-native";
 
 interface CustomInputProps {
-  label: string;
+  label?: string;
   value: string;
   onChangeText: (text: string) => void;
   placeholder: string;
@@ -28,6 +26,8 @@ interface CustomInputProps {
   style?: ViewStyle;
   inputStyle?: TextStyle;
   width?: DimensionValue;
+  height?: DimensionValue;
+  inputBorder?: number;
 }
 
 const CustomInput: React.FC<CustomInputProps> = ({
@@ -44,6 +44,8 @@ const CustomInput: React.FC<CustomInputProps> = ({
   style,
   inputStyle,
   width = "80%",
+  height = "auto",
+  inputBorder = 4,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
 
@@ -52,9 +54,12 @@ const CustomInput: React.FC<CustomInputProps> = ({
 
   console.warn(isFocused);
 
-  const inputStyles = [
-    styles.input,
-    inputStyle,
+  const inputStyles = [styles.input, inputStyle];
+
+  const inputContainerStyples = [
+    styles.inputContainer,
+    { borderRadius: inputBorder },
+    { height: height },
     isFocused && styles.focusedInput,
   ];
 
@@ -68,10 +73,10 @@ const CustomInput: React.FC<CustomInputProps> = ({
       ]}
     >
       {/* Label */}
-      <Text style={[styles.label]}>{label}</Text>
+      {label && <Text style={[styles.label]}>{label}</Text>}
 
       {/* Input field */}
-      <View style={[styles.inputContainer]}>
+      <View style={inputContainerStyples}>
         {leadingIcon && <View style={styles.iconContainer}>{leadingIcon}</View>}
         <TextInput
           style={inputStyles}
@@ -111,7 +116,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderRadius: 4,
     borderColor: colors.tertiary3,
     backgroundColor: "#fff",
     paddingHorizontal: 12,
@@ -121,7 +125,9 @@ const styles = StyleSheet.create({
     borderColor: colors.tertiary1, // Blue color when focused
   },
   input: {
-    ...fonts.bodyLarge,
+    fontFamily: "Roboto_300Medium",
+    fontSize: 18,
+    letterSpacing: 1,
     flex: 1,
     color: "#333",
   },

@@ -1,79 +1,207 @@
 import Button from "@/components/button/Button";
 import CustomInput from "@/components/form/CustomInput";
-import { View, Text } from "react-native";
-import { Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
-import IconButton from "@/components/button/IconButton";
-import RecordCard from "@/components/card/RecordCard";
-import ScreenTitle from "@/components/screen/ScreenTitle";
-import StatusCell from "@/components/card/StatusCell";
-import TodayTargetCard from "@/components/card/TodayTargetCard";
+import { setCredentials } from "@/store/features/auth/authSlice";
+import { useLoginMutation } from "@/store/services/authApi";
+import { saveToken } from "@/store/utils/tokenUtils";
+import { colors } from "@/theme/colors";
+import { fonts } from "@/theme/fonts";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { router } from "expo-router";
+import { useState } from "react";
+import {
+  ActivityIndicator,
+  Image,
+  ImageBackground,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { useDispatch } from "react-redux";
 
 export default function Login() {
+  const dispatch = useDispatch();
+  const [login, { isLoading, error }] = useLoginMutation();
+
+  const [inputs, setInputs] = useState({
+    email: "john2.doe@example.com",
+    password: "password123",
+  });
+
+  const handleLogin = async () => {
+    if (inputs.email.length === 0 || inputs.email.length === 0) {
+      console.error("Email or password is empty");
+      return;
+    }
+
+    try {
+      const result = await login(inputs).unwrap();
+      console.log("Đăng nhập thành công!", result);
+
+      dispatch(setCredentials({ isLoggedIn: true }));
+      saveToken(result.access_token);
+      router.replace("/(tabs)");
+    } catch (err) {
+      console.error("Đăng nhập thất bại:", err);
+    }
+  };
+
   return (
-    <View className="flex-1 justify-center items-center">
-      <ScreenTitle
-        title="Chi tiết sức khoẻ"
-        LeadingIconButton={
-          <IconButton
-            icon={<Ionicons name="arrow-back" size={20} color="white" />}
+    <ImageBackground
+      source={require("../../assets/images/background.png")}
+      resizeMode="cover"
+      style={{ flex: 1, zIndex: -1 }}
+    >
+      <SafeAreaView>
+        <View style={styles.container}>
+          <View style={styles.logoContainer}>
+            <Image
+              source={require("../../assets/images/app-logo.png")}
+              resizeMode="contain"
+              width={150}
+              style={styles.logoImg}
+            />
+            <Text style={styles.logoText}>Welcome</Text>
+          </View>
+          <View>
+            <View style={styles.inputContainer}>
+              <CustomInput
+                inputStyle={styles.input}
+                label=""
+                value={inputs.email}
+                placeholder="Enter your email here..."
+                onChangeText={(e) => {
+                  setInputs({ ...inputs, email: e });
+                }}
+                leadingIcon={
+                  <Ionicons name="mail-outline" size={24} color="#000" />
+                }
+                inputBorder={999}
+                width="90%"
+                height={60}
+              />
+
+              <CustomInput
+                inputStyle={styles.input}
+                label=""
+                value={inputs.password}
+                placeholder="Enter your password here..."
+                onChangeText={(e) => {
+                  setInputs({ ...inputs, password: e });
+                }}
+                leadingIcon={
+                  <Ionicons name="lock-closed-outline" size={24} color="#000" />
+                }
+                secureTextEntry
+                inputBorder={999}
+                width="90%"
+                height={60}
+              />
+              <Text
+                style={{
+                  width: "80%",
+                  textAlign: "right",
+                  color: "#F97316",
+                  textDecorationLine: "underline",
+                  ...fonts.titleMedium,
+                  lineHeight: 0,
+                  // paddingEnd: 20,
+                }}
+              >
+                Forgot password
+              </Text>
+              <Button
+                title="Đăng nhập"
+                onPress={handleLogin}
+                width="90%"
+                leadingIcon={isLoading && <ActivityIndicator color="white" />}
+              />
+            </View>
+          </View>
+        </View>
+
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: 10,
+            marginVertical: 20,
+          }}
+        >
+          <View style={styles.dividerBar}></View>
+          <Text style={{ marginHorizontal: 5 }}>Or</Text>
+          <View style={styles.dividerBar}></View>
+        </View>
+        <View style={{ alignItems: "center", gap: 20 }}>
+          <Button
+            title="Đăng nhập bằng Google"
             onPress={() => {
-              console.log("back");
+              console.log("Login with google!");
             }}
+            leadingIcon={
+              <Image
+                style={{ width: 25, height: 25 }}
+                source={require("../../assets/images/Social_Icons.png")}
+                resizeMode="contain"
+              />
+            }
+            style={{ backgroundColor: "#E4E4E7" }}
+            textStyle={{ color: "black" }}
+            width="90%"
           />
-        }
-        TrailingIconButton={
-          <IconButton
-            icon={<Ionicons name="ellipsis-vertical" size={20} color="white" />}
-            onPress={() => console.log("More options")}
-          />
-        }
-      />
-      <StatusCell
-        type="Heart Rate"
-        values={[
-          { value: "78", unit: "mp" },
-          { value: "78", unit: "mp" },
-        ]}
-        image={require("../../assets/images/status-cell-img/running.png")}
-      />
 
-      <TodayTargetCard
-        typeTarget="Bước chân"
-        target="10000"
-        todayValue="6400"
-        unit="bước"
-        image={require("../../assets/images/status-cell-img/running.png")}
-      />
-
-      <Text className="text-red-500">Đây là màn hình Đăng nhập</Text>
-      <Button title="Hello" onPress={() => {}} />
-      <CustomInput
-        label="Name"
-        value=""
-        onChangeText={() => {}}
-        placeholder="Enter your name"
-        leadingIcon={<FontAwesome name="user" size={20} color="#333" />}
-        helperText="Error"
-        helperIcon={
-          <FontAwesome name="exclamation-circle" size={14} color="red" />
-        }
-        disabled={true}
-      />
-      <IconButton
-        icon={<Feather name="edit" size={20} color="white" />}
-        onPress={() => console.log("Edit pressed")}
-      />
-
-      <RecordCard
-        value="72 bpm"
-        datetime="2025-05-11 08:30"
-        recordType="Heart Rate"
-      />
-      <RecordCard
-        value="98.6 °F"
-        datetime="2025-05-11 08:45"
-        recordType="Body Temperature"
-      />
-    </View>
+          <Text
+            style={{
+              textAlign: "center",
+              ...fonts.titleMedium,
+            }}
+          >
+            <Text>Bạn chưa có tài khoản? </Text>
+            <Text
+              style={{
+                color: "#16A34A",
+                fontSize: 20,
+              }}
+            >
+              Đăng ký
+            </Text>
+          </Text>
+        </View>
+      </SafeAreaView>
+    </ImageBackground>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    marginTop: 30,
+  },
+  logoContainer: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  logoText: {
+    color: "#16A34A",
+    fontFamily: "Roboto_700Bold",
+    fontSize: 30,
+  },
+  logoImg: {
+    // borderWidth: 1,
+  },
+  inputContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 20,
+    marginTop: 30,
+  },
+
+  input: {},
+  dividerBar: {
+    borderTopWidth: 3,
+    borderColor: colors.tertiary3,
+    flexGrow: 1,
+  },
+});

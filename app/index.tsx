@@ -1,6 +1,6 @@
-import React from "react";
-import { View, ActivityIndicator } from "react-native";
 import { Redirect } from "expo-router";
+import React from "react";
+import { ActivityIndicator, View } from "react-native";
 import useFirstLaunch from "../hooks/useFirstLaunch";
 
 export default function Index() {
@@ -14,5 +14,5 @@ export default function Index() {
     );
   }
 
-  return <Redirect href={isFirstLaunch ? "/onboarding" : "/(auth)/login"} />;
+  return <Redirect href={isFirstLaunch ? "/onboarding" : "/(auth)"} />;
 }
