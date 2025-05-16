@@ -72,7 +72,7 @@ export default function Login() {
                 inputStyle={styles.input}
                 label=""
                 value={inputs.email}
-                placeholder="Enter your email here..."
+                placeholder="Email..."
                 onChangeText={(e) => {
                   setInputs({ ...inputs, email: e });
                 }}
@@ -88,7 +88,7 @@ export default function Login() {
                 inputStyle={styles.input}
                 label=""
                 value={inputs.password}
-                placeholder="Enter your password here..."
+                placeholder="Mật khẩu..."
                 onChangeText={(e) => {
                   setInputs({ ...inputs, password: e });
                 }}
@@ -141,8 +141,8 @@ export default function Login() {
             flexDirection: "row",
             justifyContent: "center",
             alignItems: "center",
-            padding: 10,
-            marginVertical: 20,
+            paddingHorizontal: 40,
+            marginVertical: 30,
           }}
         >
           <View style={styles.dividerBar}></View>
@@ -178,6 +178,9 @@ export default function Login() {
               style={{
                 color: "#16A34A",
                 fontSize: 20,
+              }}
+              onPress={() => {
+                router.push("/(auth)/register");
               }}
             >
               Đăng ký

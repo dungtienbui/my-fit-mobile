@@ -25,9 +25,12 @@ interface CustomInputProps {
   disabled?: boolean;
   style?: ViewStyle;
   inputStyle?: TextStyle;
+  labelStyle?: TextStyle;
   width?: DimensionValue;
   height?: DimensionValue;
   inputBorder?: number;
+  isEmailInput?: boolean;
+  inputStatus?: "default" | "error" | "success";
 }
 
 const CustomInput: React.FC<CustomInputProps> = ({
@@ -43,9 +46,12 @@ const CustomInput: React.FC<CustomInputProps> = ({
   disabled = false,
   style,
   inputStyle,
+  labelStyle,
   width = "80%",
   height = "auto",
   inputBorder = 4,
+  isEmailInput,
+  inputStatus = "default",
 }) => {
   const [isFocused, setIsFocused] = useState(false);
 
@@ -58,6 +64,10 @@ const CustomInput: React.FC<CustomInputProps> = ({
     { borderRadius: inputBorder },
     { height: height },
     isFocused && styles.focusedInput,
+    isFocused && inputStatus === "error" && styles.focusedInputError,
+    inputStatus === "success" && {
+      backgroundColor: "#F0FDF4",
+    },
   ];
 
   return (
@@ -70,7 +80,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
       ]}
     >
       {/* Label */}
-      {label && <Text style={[styles.label]}>{label}</Text>}
+      {label && <Text style={[styles.label, labelStyle]}>{label}</Text>}
 
       {/* Input field */}
       <View style={inputContainerStyples}>
@@ -84,6 +94,9 @@ const CustomInput: React.FC<CustomInputProps> = ({
           onFocus={handleFocus}
           onBlur={handleBlur}
           editable={!disabled}
+          autoCapitalize="none"
+          autoCorrect={false}
+          keyboardType={isEmailInput ? "email-address" : "default"}
         />
         {trailingIcon && (
           <View style={styles.iconContainer}>{trailingIcon}</View>
@@ -94,7 +107,14 @@ const CustomInput: React.FC<CustomInputProps> = ({
       {helperText && (
         <View style={styles.helperContainer}>
           {helperIcon && <View style={styles.iconContainer}>{helperIcon}</View>}
-          <Text style={[styles.helperText]}>{helperText}</Text>
+          <Text
+            style={[
+              styles.helperText,
+              { color: inputStatus === "error" ? "red" : undefined },
+            ]}
+          >
+            {helperText}
+          </Text>
         </View>
       )}
     </View>
@@ -121,6 +141,9 @@ const styles = StyleSheet.create({
   focusedInput: {
     borderColor: colors.tertiary1, // Blue color when focused
   },
+  focusedInputError: {
+    borderColor: "red", // Blue color when focused
+  },
   input: {
     fontFamily: "Roboto_300Medium",
     fontSize: 18,
@@ -139,6 +162,7 @@ const styles = StyleSheet.create({
   helperText: {
     ...fonts.bodyMedium,
     color: colors.tertiary2,
+    flexShrink: 1,
   },
 });
 

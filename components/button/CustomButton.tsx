@@ -35,7 +35,12 @@ const CustomButton: React.FC<ButtonProps> = ({
 }) => {
   return (
     <TouchableOpacity
-      style={[styles.button, { width: width }, style]}
+      style={[
+        styles.button,
+        style,
+        { width: width },
+        { opacity: isDisable ? 0.5 : 1 },
+      ]}
       onPress={onPress}
       disabled={isDisable === true}
     >

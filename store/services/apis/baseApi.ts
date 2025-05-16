@@ -7,6 +7,8 @@ const rawBaseQuery = fetchBaseQuery({
   baseUrl: "https://my-fit-webservice.onrender.com",
   prepareHeaders: async (headers) => {
     const token = await getToken();
+    // const token =
+    //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODFlMjkyODhhOWNhNzIzMmYzNTU0YTgiLCJlbWFpbCI6ImpvaG4zLmRvZUBleGFtcGxlLmNvbSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQ3MzcyNzAyLCJleHAiOjE3NDczNzYzMDJ9.X2cZ1Nx1GRyIQ2WK8wJxkpQ6E9bFgupbIZ09Pi29oaQ";
     if (token) {
       headers.set("authorization", `Bearer ${token}`);
     }

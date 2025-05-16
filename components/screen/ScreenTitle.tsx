@@ -1,20 +1,22 @@
 import { fonts } from "@/theme/fonts";
 import React from "react";
-import { View, Text, StyleSheet, Dimensions } from "react-native";
+import { StyleSheet, Text, View, ViewStyle } from "react-native";
 
 type ScreenTitleProps = {
   title: string;
   LeadingIconButton?: React.ReactElement;
   TrailingIconButton?: React.ReactElement;
+  style?: ViewStyle;
 };
 
 const ScreenTitle = ({
   title,
   LeadingIconButton,
   TrailingIconButton,
+  style,
 }: ScreenTitleProps) => {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       {/* Icon trái */}
       {LeadingIconButton}
 
@@ -37,6 +39,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 10,
     position: "relative",
+    marginTop: 5,
   },
   title: {
     position: "absolute",
