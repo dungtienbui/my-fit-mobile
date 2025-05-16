@@ -51,9 +51,6 @@ const CustomInput: React.FC<CustomInputProps> = ({
 
   const handleFocus = () => setIsFocused(true);
   const handleBlur = () => setIsFocused(false);
-
-  console.warn(isFocused);
-
   const inputStyles = [styles.input, inputStyle];
 
   const inputContainerStyples = [
