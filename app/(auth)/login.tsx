@@ -12,6 +12,7 @@ import {
   ActivityIndicator,
   Image,
   ImageBackground,
+  Pressable,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -27,6 +28,8 @@ export default function Login() {
     email: "john2.doe@example.com",
     password: "password123",
   });
+
+  const [isShowPassword, setIsShowPassword] = useState(false);
 
   const handleLogin = async () => {
     if (inputs.email.length === 0 || inputs.email.length === 0) {
@@ -92,7 +95,20 @@ export default function Login() {
                 leadingIcon={
                   <Ionicons name="lock-closed-outline" size={24} color="#000" />
                 }
-                secureTextEntry
+                trailingIcon={
+                  <Pressable
+                    onPress={() => {
+                      setIsShowPassword((prev) => !prev);
+                    }}
+                  >
+                    {!isShowPassword ? (
+                      <Ionicons name="eye-outline" size={24} color="#000" />
+                    ) : (
+                      <Ionicons name="eye-off-outline" size={24} color="#000" />
+                    )}
+                  </Pressable>
+                }
+                secureTextEntry={!isShowPassword}
                 inputBorder={999}
                 width="90%"
                 height={60}
