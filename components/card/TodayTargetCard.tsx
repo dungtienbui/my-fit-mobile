@@ -2,12 +2,12 @@ import { fonts } from "@/theme/fonts";
 import { shadow } from "@/theme/shadow";
 import React from "react";
 import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  ImageSourcePropType,
   DimensionValue,
+  Image,
+  ImageSourcePropType,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 
@@ -31,7 +31,9 @@ const TodayTargetCard = ({
   const targetNum = parseFloat(target);
   const valueNum = parseFloat(todayValue);
   const progress =
-    targetNum > 0 ? Math.min((valueNum / targetNum) * 100, 100) : 0;
+    targetNum > 0 ? Math.min(Math.round((valueNum / targetNum) * 100), 100) : 0;
+
+  // console.warn("progress: ", progress);
   return (
     <View style={[styles.card, { width: width }, shadow.medium]}>
       <View style={styles.leftSection}>
@@ -49,7 +51,7 @@ const TodayTargetCard = ({
           width={5}
           fill={progress}
           tintColor="#4CAF50"
-          onAnimationComplete={() => console.log("onAnimationComplete")}
+          // onAnimationComplete={() => console.log("onAnimationComplete")}
           backgroundColor="#eee"
           rotation={0}
         >
@@ -76,8 +78,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   icon: {
-    width: 40,
-    height: 40,
+    width: 50,
+    height: 50,
     marginRight: 10,
     resizeMode: "contain",
   },

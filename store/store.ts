@@ -1,9 +1,10 @@
-import { persistReducer, persistStore } from "redux-persist";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import { persistReducer, persistStore } from "redux-persist";
+import authReducer from "./features/auth/authSlice";
+import userReducer from "./features/user/userSlice";
 import { baseApi } from "./services/apis/baseApi";
 import { authApi } from "./services/authApi";
-import authReducer from "./features/auth/authSlice";
 
 const authPersistConfig = {
   key: "auth",
@@ -14,6 +15,7 @@ const rootReducer = combineReducers({
   auth: persistReducer(authPersistConfig, authReducer),
   [baseApi.reducerPath]: baseApi.reducer,
   [authApi.reducerPath]: authApi.reducer,
+  user: userReducer,
 });
 
 export const store = configureStore({

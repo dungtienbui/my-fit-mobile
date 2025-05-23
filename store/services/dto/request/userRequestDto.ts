@@ -4,4 +4,5 @@ export type UserRequestDto = {
   age: number;
   height: number;
   weight: number;
+  address: string;
 };
