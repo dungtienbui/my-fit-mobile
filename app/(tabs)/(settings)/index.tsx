@@ -5,6 +5,7 @@ import { fonts } from "@/theme/fonts";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {
   Image,
+  Platform,
   Pressable,
   SafeAreaView,
   ScrollView,
@@ -18,7 +19,10 @@ export default function Index() {
   const dispatch = useDispatch();
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <ScreenTitle title="Profile and Settings" />
+      <ScreenTitle
+        title="Profile and Settings"
+        style={{ marginTop: Platform.OS === "android" ? 40 : 0 }}
+      />
 
       <ScrollView>
         <View style={styles.container}>

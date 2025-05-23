@@ -13,7 +13,6 @@ import {
   Image,
   ImageBackground,
   Pressable,
-  SafeAreaView,
   StyleSheet,
   Text,
   View,
@@ -53,148 +52,146 @@ export default function Login() {
     <ImageBackground
       source={require("../../assets/images/background.png")}
       resizeMode="cover"
-      style={{ flex: 1, zIndex: -1 }}
+      style={{ flex: 1 }}
     >
-      <SafeAreaView>
-        <View style={styles.container}>
-          <View style={styles.logoContainer}>
-            <Image
-              source={require("../../assets/images/app-logo.png")}
-              resizeMode="contain"
-              width={150}
-              style={styles.logoImg}
-            />
-            <Text style={styles.logoText}>Welcome</Text>
-          </View>
-          <View>
-            <View style={styles.inputContainer}>
-              <CustomInput
-                inputStyle={styles.input}
-                label=""
-                value={inputs.email}
-                placeholder="Email..."
-                onChangeText={(e) => {
-                  setInputs({ ...inputs, email: e });
-                }}
-                leadingIcon={
-                  <Ionicons name="mail-outline" size={24} color="#000" />
-                }
-                inputBorder={999}
-                width="90%"
-                height={60}
-              />
-
-              <CustomInput
-                inputStyle={styles.input}
-                label=""
-                value={inputs.password}
-                placeholder="Mật khẩu..."
-                onChangeText={(e) => {
-                  setInputs({ ...inputs, password: e });
-                }}
-                leadingIcon={
-                  <Ionicons name="lock-closed-outline" size={24} color="#000" />
-                }
-                trailingIcon={
-                  <Pressable
-                    onPress={() => {
-                      setIsShowPassword((prev) => !prev);
-                    }}
-                  >
-                    {!isShowPassword ? (
-                      <Ionicons name="eye-outline" size={24} color="#000" />
-                    ) : (
-                      <Ionicons name="eye-off-outline" size={24} color="#000" />
-                    )}
-                  </Pressable>
-                }
-                secureTextEntry={!isShowPassword}
-                inputBorder={999}
-                width="90%"
-                height={60}
-              />
-              <Text
-                style={{
-                  width: "80%",
-                  textAlign: "right",
-                  color: "#F97316",
-                  textDecorationLine: "underline",
-                  ...fonts.titleMedium,
-                  lineHeight: 0,
-                  // paddingEnd: 20,
-                }}
-              >
-                Forgot password
-              </Text>
-              <CustomButton
-                title="Đăng nhập"
-                onPress={handleLogin}
-                width="90%"
-                leadingIcon={isLoading && <ActivityIndicator color="white" />}
-              />
-            </View>
-          </View>
-        </View>
-
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-            paddingHorizontal: 40,
-            marginVertical: 30,
-          }}
-        >
-          <View style={styles.dividerBar}></View>
-          <Text style={{ marginHorizontal: 5 }}>Or</Text>
-          <View style={styles.dividerBar}></View>
-        </View>
-        <View style={{ alignItems: "center", gap: 20 }}>
-          <CustomButton
-            title="Đăng nhập bằng Google"
-            onPress={() => {
-              console.log("Login with google!");
-            }}
-            leadingIcon={
-              <Image
-                style={{ width: 25, height: 25 }}
-                source={require("../../assets/images/Social_Icons.png")}
-                resizeMode="contain"
-              />
-            }
-            style={{ backgroundColor: "#E4E4E7" }}
-            textStyle={{ color: "black" }}
-            width="90%"
+      <View style={styles.container}>
+        <View style={styles.logoContainer}>
+          <Image
+            source={require("../../assets/images/app-logo.png")}
+            resizeMode="contain"
+            width={150}
+            style={styles.logoImg}
           />
+          <Text style={styles.logoText}>Welcome</Text>
+        </View>
+        <View>
+          <View style={styles.inputContainer}>
+            <CustomInput
+              inputStyle={styles.input}
+              label=""
+              value={inputs.email}
+              placeholder="Email..."
+              onChangeText={(e) => {
+                setInputs({ ...inputs, email: e });
+              }}
+              leadingIcon={
+                <Ionicons name="mail-outline" size={24} color="#000" />
+              }
+              inputBorder={999}
+              width="90%"
+              height={60}
+            />
 
-          <Text
-            style={{
-              textAlign: "center",
-              ...fonts.titleMedium,
-            }}
-          >
-            <Text>Bạn chưa có tài khoản? </Text>
+            <CustomInput
+              inputStyle={styles.input}
+              label=""
+              value={inputs.password}
+              placeholder="Mật khẩu..."
+              onChangeText={(e) => {
+                setInputs({ ...inputs, password: e });
+              }}
+              leadingIcon={
+                <Ionicons name="lock-closed-outline" size={24} color="#000" />
+              }
+              trailingIcon={
+                <Pressable
+                  onPress={() => {
+                    setIsShowPassword((prev) => !prev);
+                  }}
+                >
+                  {!isShowPassword ? (
+                    <Ionicons name="eye-outline" size={24} color="#000" />
+                  ) : (
+                    <Ionicons name="eye-off-outline" size={24} color="#000" />
+                  )}
+                </Pressable>
+              }
+              secureTextEntry={!isShowPassword}
+              inputBorder={999}
+              width="90%"
+              height={60}
+            />
             <Text
               style={{
-                color: "#16A34A",
-                fontSize: 20,
-              }}
-              onPress={() => {
-                router.push("/(auth)/register");
+                width: "80%",
+                textAlign: "right",
+                color: "#F97316",
+                textDecorationLine: "underline",
+                ...fonts.titleMedium,
+                lineHeight: 0,
+                // paddingEnd: 20,
               }}
             >
-              Đăng ký
+              Forgot password
             </Text>
-          </Text>
+            <CustomButton
+              title="Đăng nhập"
+              onPress={handleLogin}
+              width="90%"
+              leadingIcon={isLoading && <ActivityIndicator color="white" />}
+            />
+          </View>
         </View>
-      </SafeAreaView>
+      </View>
+
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "center",
+          alignItems: "center",
+          paddingHorizontal: 40,
+          marginVertical: 30,
+        }}
+      >
+        <View style={styles.dividerBar}></View>
+        <Text style={{ marginHorizontal: 5 }}>Or</Text>
+        <View style={styles.dividerBar}></View>
+      </View>
+      <View style={{ alignItems: "center", gap: 20 }}>
+        <CustomButton
+          title="Đăng nhập bằng Google"
+          onPress={() => {
+            console.log("Login with google!");
+          }}
+          leadingIcon={
+            <Image
+              style={{ width: 25, height: 25 }}
+              source={require("../../assets/images/Social_Icons.png")}
+              resizeMode="contain"
+            />
+          }
+          style={{ backgroundColor: "#E4E4E7" }}
+          textStyle={{ color: "black" }}
+          width="90%"
+        />
+
+        <Text
+          style={{
+            textAlign: "center",
+            ...fonts.titleMedium,
+          }}
+        >
+          <Text>Bạn chưa có tài khoản? </Text>
+          <Text
+            style={{
+              color: "#16A34A",
+              fontSize: 20,
+            }}
+            onPress={() => {
+              router.push("/(auth)/register");
+            }}
+          >
+            Đăng ký
+          </Text>
+        </Text>
+      </View>
     </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 30,
+    marginTop: 50,
   },
   logoContainer: {
     display: "flex",

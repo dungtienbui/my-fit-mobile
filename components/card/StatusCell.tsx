@@ -3,13 +3,13 @@ import { fonts } from "@/theme/fonts";
 import { shadow } from "@/theme/shadow";
 import React from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  ImageSourcePropType,
   DimensionValue,
   FlatList,
+  Image,
+  ImageSourcePropType,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 
 type StatusCellProps = {

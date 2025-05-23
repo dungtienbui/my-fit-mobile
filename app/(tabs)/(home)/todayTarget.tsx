@@ -9,6 +9,7 @@ import { router } from "expo-router";
 import { useEffect } from "react";
 import {
   Image,
+  Platform,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -63,6 +64,7 @@ export default function TodayTarget() {
             }}
           />
         }
+        style={{ marginTop: Platform.OS === "android" ? 40 : 0 }}
       />
       <ScrollView>
         <View style={styles.container}>
