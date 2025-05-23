@@ -34,12 +34,12 @@ const ScreenTitle = ({
 const styles = StyleSheet.create({
   container: {
     width: "100%",
+    height: 50,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 10,
     position: "relative",
-    marginTop: 5,
   },
   title: {
     position: "absolute",

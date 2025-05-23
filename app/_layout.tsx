@@ -6,7 +6,6 @@ import { StatusBar } from "react-native";
 import Toast from "react-native-toast-message";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
-import "../global.css";
 
 export default function RootLayout() {
   return (
