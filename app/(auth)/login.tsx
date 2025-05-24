@@ -24,7 +24,7 @@ export default function Login() {
   const [login, { isLoading, error }] = useLoginMutation();
 
   const [inputs, setInputs] = useState({
-    email: "john2.doe@example.com",
+    email: "john.doe@example.com",
     password: "password123",
   });
 
@@ -86,7 +86,7 @@ export default function Login() {
               inputStyle={styles.input}
               label=""
               value={inputs.password}
-              placeholder="Mật khẩu..."
+              placeholder="Password..."
               onChangeText={(e) => {
                 setInputs({ ...inputs, password: e });
               }}
@@ -125,7 +125,7 @@ export default function Login() {
               Forgot password
             </Text>
             <CustomButton
-              title="Đăng nhập"
+              title="Login"
               onPress={handleLogin}
               width="90%"
               leadingIcon={isLoading && <ActivityIndicator color="white" />}
@@ -149,7 +149,7 @@ export default function Login() {
       </View>
       <View style={{ alignItems: "center", gap: 20 }}>
         <CustomButton
-          title="Đăng nhập bằng Google"
+          title="Continue with Google"
           onPress={() => {
             console.log("Login with google!");
           }}
@@ -171,7 +171,7 @@ export default function Login() {
             ...fonts.titleMedium,
           }}
         >
-          <Text>Bạn chưa có tài khoản? </Text>
+          <Text>Don't have an account? </Text>
           <Text
             style={{
               color: "#16A34A",
@@ -181,7 +181,7 @@ export default function Login() {
               router.push("/(auth)/register");
             }}
           >
-            Đăng ký
+            Sign up
           </Text>
         </Text>
       </View>

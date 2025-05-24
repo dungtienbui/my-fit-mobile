@@ -35,13 +35,26 @@ export default function Index() {
           type: "info",
         });
       } else {
-        if (data.height > 0) {
+        if (data.height > 0 && data.weight > 0) {
           const bmi = Math.round(data.weight / (data.height / 100) ** 2);
-          setBMI(bmi);
+          console.log("bmi: ", bmi);
+
+          if (bmi < 10 || bmi > 60) {
+            Toast.show({
+              text1: "Ooh!",
+              text2:
+                "Your height or weight is invalid to calculate BMI! Please enter a valid height or weight.",
+              type: "error",
+            });
+            setBMI(0);
+          } else {
+            setBMI(bmi);
+          }
         } else {
           Toast.show({
             text1: "Ooh!",
-            text2: "Your height is 0! Please enter a valid height.",
+            text2:
+              "Your height or weight is 0! Please enter a valid height or weight.",
             type: "info",
           });
         }

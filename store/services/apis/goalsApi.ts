@@ -1,7 +1,4 @@
-import {
-  GoalRequestDto,
-  UpdateGoalRequestDto,
-} from "../dto/request/goalsRequestDto";
+import { GoalRequestDto } from "../dto/request/goalsRequestDto";
 import { GoalResponseDto } from "../dto/response/goalsResponseDto";
 import { baseApi } from "./baseApi";
 
@@ -10,15 +7,15 @@ const baseUrl = "/goals";
 export const goalApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getGoals: builder.query<GoalResponseDto[], void>({
-      query: () => baseUrl,
+      query: () => baseUrl + "/me",
       providesTags: ["Goals"],
     }),
 
     createGoal: builder.mutation<GoalResponseDto, GoalRequestDto>({
-      query: (body) => ({
+      query: (data) => ({
         url: baseUrl,
         method: "POST",
-        body,
+        body: data,
       }),
       invalidatesTags: ["Goals"],
     }),
@@ -27,33 +24,15 @@ export const goalApi = baseApi.injectEndpoints({
       GoalResponseDto,
       {
         id: string;
-        data: Partial<UpdateGoalRequestDto>;
+        data: GoalRequestDto;
       }
     >({
       query: ({ id, data }) => ({
         url: `${baseUrl}/${id}`,
         method: "PATCH",
-        data,
+        body: data,
       }),
       invalidatesTags: ["Goals"],
-    }),
-
-    getGoalsByType: builder.query<
-      GoalResponseDto[],
-      {
-        type:
-          | "exerciseHours"
-          | "steps"
-          | "sleeping"
-          | "weight"
-          | "bodyFatPercentage"
-          | "food"
-          | "energyBurned"
-          | "water";
-      }
-    >({
-      query: ({ type }) => `${baseUrl}/${type}`,
-      providesTags: ["Goals"],
     }),
   }),
   overrideExisting: false, // Nếu đã có endpoint nào trùng thì không ghi đè
@@ -63,5 +42,4 @@ export const {
   useCreateGoalMutation,
   useUpdateGoalMutation,
   useGetGoalsQuery,
-  useGetGoalsByTypeQuery,
 } = goalApi;

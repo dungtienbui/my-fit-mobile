@@ -103,17 +103,17 @@ export default function RegisterPassword() {
 
   useEffect(() => {
     if (data) {
-      console.log("result: ", data);
-
       dispatch(setCredentials({ isLoggedIn: true }));
 
       saveToken(data.access_token);
 
+      router.replace("/(tabs)");
+
       Toast.show({
         type: "success",
-        text1: "Chúc mừng",
+        text1: "Congratulations",
         text2:
-          "Bạn đã đăng ký tài khoản thành công. Hãy bắt đầu khám pháp MyFIT.",
+          "You have successfully registered an account. Let's start exploring MyFIT.",
       });
     }
   }, [data]);
@@ -124,15 +124,16 @@ export default function RegisterPassword() {
       if (errorCast.data.message === "Email already exists") {
         Toast.show({
           type: "error",
-          text1: "Xin lỗi",
-          text2: "Email đã tồi tại tài khoản trước đó.",
+          text1: "Sorry",
+          text2: "This email is already associated with an existing account.",
         });
         return;
       }
+
       Toast.show({
         type: "error",
-        text1: "Xin lỗi",
-        text2: "Đã có sự cố khi nhập đăng ký. Vui lòng thử lại.",
+        text1: "Sorry",
+        text2: "There was an issue during registration. Please try again.",
       });
 
       // router.dismissAll();
@@ -145,9 +146,9 @@ export default function RegisterPassword() {
       resizeMode="cover"
       style={{ flex: 1, zIndex: -1 }}
     >
-      <SafeAreaView style={{ borderWidth: 1, borderColor: "red", flex: 1 }}>
+      <SafeAreaView style={{ flex: 1 }}>
         <ScreenTitle
-          title="Đăng ký tài khoản"
+          title="Register"
           LeadingIconButton={
             <IconButton
               icon={<Ionicons name="arrow-back" size={15} color="#fff" />}
@@ -166,10 +167,10 @@ export default function RegisterPassword() {
             }}
           >
             <CustomInput
-              label="Nhập mật khẩu"
+              label="Create a new password"
               labelStyle={styles.inputTitle}
               value={password}
-              placeholder="Mật khẩu..."
+              placeholder="Password..."
               onChangeText={setPassword}
               width="90%"
               height={50}
@@ -204,10 +205,10 @@ export default function RegisterPassword() {
             />
 
             <CustomInput
-              label="Xác nhận mật khẩu"
+              label="Confirm the password"
               labelStyle={styles.inputTitle}
               value={confirmPassword}
-              placeholder="Mật khẩu..."
+              placeholder="Password..."
               onChangeText={setConfirmPassword}
               width="90%"
               height={50}
@@ -262,7 +263,7 @@ export default function RegisterPassword() {
               <Text style={styles.privacyTextNote}> Privacy Policy</Text>
             </Text>
             <CustomButton
-              title="Tiếp theo"
+              title="Next"
               onPress={handleSubmitInput}
               width="90%"
               isDisable={checkConfirmPassword().isCorrect !== true}
@@ -280,7 +281,7 @@ export default function RegisterPassword() {
         <View style={styles.modalBackground}>
           <View style={styles.spinnerContainer}>
             <ActivityIndicator size="large" color="green" />
-            <Text style={styles.loadingText}>Đăng gửi đăng ký...</Text>
+            <Text style={styles.loadingText}>Registering...</Text>
           </View>
         </View>
       </Modal>

@@ -1,23 +1,32 @@
-type GoalType =
-  | "exerciseHours"
-  | "steps"
-  | "sleeping"
-  | "weight"
-  | "bodyFatPercentage"
-  | "food"
-  | "energyBurned"
-  | "water";
-
-export type GoalRequestDto = {
-  type: GoalType;
-  target: number;
-  startDate: Date;
-  endDate: Date;
+export type GoalValueDto = {
+  value: number;
+  unit: string;
+  frequency: string;
 };
 
-export type UpdateGoalRequestDto = {
+export type SleepingDto = {
+  start: Date;
+  end: Date;
+  frequency: string;
+};
+
+export type WeightGoalDto = {
   target: number;
-  startDate: Date;
-  endDate: Date;
-  isActive: boolean;
+  unit: string;
+};
+
+export type PercentageGoalDto = {
+  target: number;
+  unit: string;
+};
+
+export type GoalRequestDto = {
+  activity_exerciseHours?: GoalValueDto;
+  activity_steps?: GoalValueDto;
+  activity_sleeping?: SleepingDto;
+  health_weight?: WeightGoalDto;
+  health_bodyFatPercentage?: PercentageGoalDto;
+  nutrition_food?: GoalValueDto;
+  nutrition_energyBurned?: GoalValueDto;
+  nutrition_water?: GoalValueDto;
 };

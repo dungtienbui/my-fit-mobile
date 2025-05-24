@@ -15,6 +15,7 @@ type UserState = {
   email: string | null;
   name: string | null;
   age?: number;
+  address?: string;
   gender?: string;
   height?: number;
   weight?: number;
@@ -37,6 +38,7 @@ const userSlice = createSlice({
         email: string;
         name: string;
         age?: number;
+        address?: string;
         gender?: string;
         height?: number;
         weight?: number;
@@ -50,6 +52,7 @@ const userSlice = createSlice({
       state.email = null;
       state.name = null;
       state.age = undefined;
+      state.address = undefined;
       state.gender = undefined;
       state.height = undefined;
       state.weight = undefined;

@@ -47,7 +47,7 @@ export default function Register() {
     >
       <SafeAreaView style={{ borderWidth: 1, borderColor: "red", flex: 1 }}>
         <ScreenTitle
-          title="Đăng ký tài khoản"
+          title="Register"
           LeadingIconButton={
             <IconButton
               icon={<Ionicons name="arrow-back" size={15} color="#fff" />}
@@ -59,7 +59,7 @@ export default function Register() {
         />
         <View style={styles.container}>
           <CustomInput
-            label="Nhập địa chỉ email của bạn"
+            label="Enter your email address"
             labelStyle={styles.inputTitle}
             value={input}
             placeholder="example@gmail.com"
@@ -98,9 +98,8 @@ export default function Register() {
               <Text style={styles.privacyTextNote}> Privacy Policy</Text>
             </Text>
             <CustomButton
-              title="Tiếp theo"
+              title="Next"
               onPress={() => {
-                console.log("next");
                 router.push({
                   pathname: "/(auth)/RegisterPassword",
                   params: {

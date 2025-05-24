@@ -1,3 +1,4 @@
+import { colors } from "@/theme/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Tabs } from "expo-router";
 
@@ -6,15 +7,10 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        headerStyle: {
-          backgroundColor: "#25292e",
-        },
-        headerShadowVisible: false,
-        headerTintColor: "#fff",
         tabBarStyle: {
-          backgroundColor: "#25292e",
+          backgroundColor: "#FFF",
         },
-        tabBarActiveTintColor: "#ffd33d",
+        tabBarActiveTintColor: colors.primary1,
       }}
     >
       <Tabs.Screen
@@ -35,13 +31,7 @@ export default function TabLayout() {
         options={{
           title: "activities",
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={
-                focused ? "information-circle" : "information-circle-outline"
-              }
-              color={color}
-              size={24}
-            />
+            <Ionicons name="trending-up" color={color} size={24} />
           ),
         }}
       />
@@ -51,7 +41,7 @@ export default function TabLayout() {
           title: "challenges",
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
-              name={focused ? "navigate-circle" : "navigate-circle-outline"}
+              name={focused ? "trophy" : "trophy-outline"}
               color={color}
               size={24}
             />

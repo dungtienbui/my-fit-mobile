@@ -18,5 +18,4 @@ const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
   }, [isLoggedIn]);
   return <>{children}</>;
 };
-
 export default AuthWrapper;

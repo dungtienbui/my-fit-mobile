@@ -3,6 +3,7 @@ import { logout } from "@/store/features/auth/authSlice";
 import { colors } from "@/theme/colors";
 import { fonts } from "@/theme/fonts";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { router } from "expo-router";
 import {
   Image,
   Platform,
@@ -54,7 +55,20 @@ export default function Index() {
           <View style={styles.sectionContainer}>
             <Text style={styles.sectionTitle}>Preferences</Text>
             <View style={{ gap: 5 }}>
-              <View style={styles.itemContainter}>
+              <Pressable
+                onPress={() => {
+                  router.push("/(tabs)/(settings)/profile");
+                }}
+                style={({ pressed }) => [
+                  styles.itemContainter,
+                  pressed && {
+                    backgroundColor: "#E5F2FF",
+                    borderWidth: 1,
+                    borderRadius: 10,
+                    borderColor: "#92A3FD",
+                  },
+                ]}
+              >
                 <Ionicons
                   name="pencil-outline"
                   size={25}
@@ -66,7 +80,7 @@ export default function Index() {
                   size={25}
                   color={colors.tertiary4}
                 />
-              </View>
+              </Pressable>
 
               <View style={styles.itemContainter}>
                 <Ionicons
