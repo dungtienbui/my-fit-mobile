@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { persistReducer, persistStore } from "redux-persist";
 import authReducer from "./features/auth/authSlice";
+import todayDataReducer from "./features/user/todayDataSlice";
 import userReducer from "./features/user/userSlice";
 import { baseApi } from "./services/apis/baseApi";
 import { authApi } from "./services/authApi";
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
   [baseApi.reducerPath]: baseApi.reducer,
   [authApi.reducerPath]: authApi.reducer,
   user: userReducer,
+  todayData: todayDataReducer,
 });
 
 export const store = configureStore({

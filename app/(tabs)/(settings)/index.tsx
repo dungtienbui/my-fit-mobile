@@ -1,5 +1,6 @@
 import ScreenTitle from "@/components/screen/ScreenTitle";
 import { logout } from "@/store/features/auth/authSlice";
+import { selectUserInfo } from "@/store/features/user/userSlice";
 import { colors } from "@/theme/colors";
 import { fonts } from "@/theme/fonts";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -14,9 +15,14 @@ import {
   Text,
   View,
 } from "react-native";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function Index() {
+  const userInfo = useSelector(selectUserInfo);
+
+  if (userInfo._id === null) {
+  }
+
   const dispatch = useDispatch();
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -34,7 +40,9 @@ export default function Index() {
               resizeMode="contain"
             />
             <View style={styles.avatarTextContainer}>
-              <Text style={{ ...fonts.titleMedium }}>Dung Bui</Text>
+              <Text style={{ ...fonts.titleMedium }}>
+                {userInfo.name ?? "N/A"}
+              </Text>
               <View
                 style={{ flexDirection: "row", gap: 3, alignItems: "center" }}
               >
@@ -44,11 +52,11 @@ export default function Index() {
                   color={colors.tertiary1}
                 />
                 <Text style={{ ...fonts.bodyMedium, color: "#A3A3A3" }}>
-                  Ho Chi Minh city, Vietnam
+                  {userInfo.address ?? "N/A"}
                 </Text>
               </View>
               <Text style={{ ...fonts.bodyMedium, color: "#A3A3A3" }}>
-                Email@gamil.com
+                {userInfo.email ?? "N/A"}
               </Text>
             </View>
           </View>

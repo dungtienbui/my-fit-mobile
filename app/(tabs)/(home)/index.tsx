@@ -1,4 +1,8 @@
 import StatusCell from "@/components/card/StatusCell";
+import { useTodayData } from "@/hooks/useTodayHealthData";
+import {
+  setTodayData
+} from "@/store/features/user/todayDataSlice";
 import { setUserInfo } from "@/store/features/user/userSlice";
 import { useGetUserQuery } from "@/store/services/apis/userApi";
 import { colors } from "@/theme/colors";
@@ -23,6 +27,18 @@ export default function Index() {
   const dispatch = useDispatch();
   const { data, isLoading, error } = useGetUserQuery();
   const [BMI, setBMI] = useState<number>(0);
+
+  const { todayData } = useTodayData(new Date());
+
+  useEffect(() => {
+    if (todayData) {
+      dispatch(
+        setTodayData({
+          ...todayData,
+        })
+      );
+    }
+  }, [todayData]);
 
   useEffect(() => {
     if (data) {
@@ -203,17 +219,14 @@ export default function Index() {
               >
                 <StatusCell
                   type="Sleep"
-                  values={[
-                    { unit: "h", value: "8" },
-                    { unit: "m", value: "30" },
-                  ]}
+                  values={[{ unit: "h", value: todayData.sleep.toString() }]}
                   image={require("../../../assets/images/Sleep-Graph.png")}
                 />
                 <StatusCell
                   type="Calories & Water"
                   values={[
-                    { unit: "kCal", value: "1200" },
-                    { unit: "ml", value: "240" },
+                    { unit: "kCal", value: todayData.calories.toString() },
+                    { unit: "L", value: todayData.water.toString() },
                   ]}
                   image={require("../../../assets/images/basicfood.png")}
                 />
@@ -227,14 +240,15 @@ export default function Index() {
               >
                 <StatusCell
                   type="Walking"
-                  values={[{ unit: "step", value: "3000" }]}
+                  values={[
+                    { unit: "step", value: todayData.walking.toString() },
+                  ]}
                   image={require("../../../assets/images/statusCellWalking.png")}
                 />
                 <StatusCell
                   type="Activities"
                   values={[
-                    { unit: "h", value: "3" },
-                    { unit: "m", value: "30" },
+                    { unit: "h", value: todayData.activityTime.toString() },
                   ]}
                   image={require("../../../assets/images/statusActivities.png")}
                 />

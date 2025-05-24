@@ -6,7 +6,7 @@ const baseUrl = "/goals";
 
 export const goalApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getGoals: builder.query<GoalResponseDto[], void>({
+    getGoals: builder.query<GoalResponseDto, void>({
       query: () => baseUrl + "/me",
       providesTags: ["Goals"],
     }),

@@ -1,7 +1,9 @@
 import IconButton from "@/components/button/IconButton";
 import TodayTargetCard from "@/components/card/TodayTargetCard";
 import ScreenTitle from "@/components/screen/ScreenTitle";
+import { selectTodayData } from "@/store/features/user/todayDataSlice";
 import { selectUserInfo } from "@/store/features/user/userSlice";
+import { useGetGoalsQuery } from "@/store/services/apis/goalsApi";
 import { colors } from "@/theme/colors";
 import { fonts } from "@/theme/fonts";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -21,6 +23,14 @@ import { useSelector } from "react-redux";
 
 export default function TodayTarget() {
   const userInfo = useSelector(selectUserInfo);
+
+  const todayData = useSelector(selectTodayData);
+
+  const {
+    data: goals,
+    error: goalsErorr,
+    isLoading: goalsIsLoading,
+  } = useGetGoalsQuery();
 
   useEffect(() => {
     if (userInfo._id === null) {
@@ -157,42 +167,66 @@ export default function TodayTarget() {
             <View style={styles.todayTargetSection}>
               <TodayTargetCard
                 typeTarget="Walking"
-                target="5000"
-                todayValue="3000"
+                target={
+                  goals?.activity_steps
+                    ? goals?.activity_steps.value.toString()
+                    : todayData.walking.toString()
+                }
+                todayValue={todayData.walking.toString()}
                 unit="step"
                 image={require("../../../assets/images/today-target/walking.png")}
                 width="100%"
               />
               <TodayTargetCard
-                typeTarget="Sleeping"
-                target="7"
-                todayValue="5"
-                unit="h"
-                image={require("../../../assets/images/today-target/sleeping.png")}
+                typeTarget="Water"
+                target={
+                  goals?.nutrition_water
+                    ? goals?.nutrition_water.value.toString()
+                    : todayData.water.toString()
+                }
+                todayValue={todayData.water.toString()}
+                unit="L"
+                image={require("../../../assets/images/today-target/walking.png")}
                 width="100%"
               />
               <TodayTargetCard
                 typeTarget="Calories"
-                target="1200"
-                todayValue="1000"
+                target={
+                  goals?.nutrition_energyBurned
+                    ? goals?.nutrition_energyBurned.value.toString()
+                    : todayData.calories.toString()
+                }
+                todayValue={todayData.walking.toString()}
                 unit="Kcal"
                 image={require("../../../assets/images/today-target/calories.png")}
                 width="100%"
               />
               <TodayTargetCard
-                typeTarget="Activity time"
-                target="3"
-                todayValue="2"
+                typeTarget="Sleeping"
+                target={
+                  goals?.activity_sleeping
+                    ? getHoursBetween(
+                        new Date(goals?.activity_sleeping.start),
+                        new Date(goals?.activity_sleeping.end)
+                      )
+                    : todayData.sleep.toString()
+                }
+                todayValue={todayData.sleep.toString()}
                 unit="h"
-                image={require("../../../assets/images/today-target/activity.png")}
+                image={require("../../../assets/images/today-target/sleeping.png")}
                 width="100%"
               />
+
               <TodayTargetCard
-                typeTarget="Water"
-                target="3"
-                todayValue="2.5"
-                unit="l"
-                image={require("../../../assets/images/today-target/walking.png")}
+                typeTarget="Activity time"
+                target={
+                  goals?.activity_exerciseHours
+                    ? goals?.activity_exerciseHours.value.toString()
+                    : todayData.activityTime.toString()
+                }
+                todayValue={todayData.activityTime.toString()}
+                unit="h"
+                image={require("../../../assets/images/today-target/activity.png")}
                 width="100%"
               />
             </View>
@@ -260,3 +294,48 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 });
+
+function getHoursBetween(date1: Date, date2: Date): string {
+  if (!(date1 instanceof Date) || !(date2 instanceof Date)) {
+    return "0";
+  }
+  const diffMs = Math.abs(date2.getTime() - date1.getTime());
+  const hours = diffMs / (1000 * 60 * 60);
+  return hours.toFixed(2); // Trả về string, ví dụ: "7.50"
+}
+
+// const {
+//   data: exerciseData,
+//   error: exerciseError,
+//   isLoading: exerciseIsLoading,
+// } = useGetHealthMetricsByDateAndTypeQuery({
+//   date: new Date(),
+//   metricType: "exercise",
+// });
+
+// const {
+//   data: weightData,
+//   error: weightError,
+//   isLoading: weightIsLoading,
+// } = useGetHealthMetricsByDateAndTypeQuery({
+//   date: new Date(),
+//   metricType: "weight",
+// });
+
+// const {
+//   data: heightData,
+//   error: heightError,
+//   isLoading: heightIsLoading,
+// } = useGetHealthMetricsByDateAndTypeQuery({
+//   date: new Date(),
+//   metricType: "height",
+// });
+
+// const {
+//   data: sleepData,
+//   error: sleepError,
+//   isLoading: sleepIsLoading,
+// } = useGetHealthMetricsByDateAndTypeQuery({
+//   date: new Date(),
+//   metricType: "sleep",
+// });
