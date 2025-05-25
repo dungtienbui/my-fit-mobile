@@ -12,7 +12,6 @@ interface ExerciseDetails {
 }
 
 interface BaseMetric {
-  userId: string;
   value: number;
   date: Date;
 }

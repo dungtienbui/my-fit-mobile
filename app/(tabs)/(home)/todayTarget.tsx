@@ -181,10 +181,10 @@ export default function TodayTarget() {
                 typeTarget="Water"
                 target={
                   goals?.nutrition_water
-                    ? goals?.nutrition_water.value.toString()
-                    : todayData.water.toString()
+                    ? goals?.nutrition_water.value.toFixed(2)
+                    : todayData.water.toFixed(2)
                 }
-                todayValue={todayData.water.toString()}
+                todayValue={todayData.water.toFixed(2)}
                 unit="L"
                 image={require("../../../assets/images/today-target/walking.png")}
                 width="100%"
@@ -209,9 +209,9 @@ export default function TodayTarget() {
                         new Date(goals?.activity_sleeping.start),
                         new Date(goals?.activity_sleeping.end)
                       )
-                    : todayData.sleep.toString()
+                    : todayData.sleep.toFixed(2)
                 }
-                todayValue={todayData.sleep.toString()}
+                todayValue={todayData.sleep.toFixed(2)}
                 unit="h"
                 image={require("../../../assets/images/today-target/sleeping.png")}
                 width="100%"
@@ -221,10 +221,10 @@ export default function TodayTarget() {
                 typeTarget="Activity time"
                 target={
                   goals?.activity_exerciseHours
-                    ? goals?.activity_exerciseHours.value.toString()
-                    : todayData.activityTime.toString()
+                    ? goals?.activity_exerciseHours.value.toFixed(2)
+                    : todayData.activityTime.toFixed(2)
                 }
-                todayValue={todayData.activityTime.toString()}
+                todayValue={todayData.activityTime.toFixed(2)}
                 unit="h"
                 image={require("../../../assets/images/today-target/activity.png")}
                 width="100%"

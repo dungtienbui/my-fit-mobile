@@ -1,7 +1,10 @@
 import { useGetHealthMetricsByDateAndTypeQuery } from "@/store/services/apis/healthMetricsApi";
 import { useEffect, useState } from "react";
+import { useTodayDate } from "./useTodayDate";
 
-export function useTodayData(date: Date = new Date()) {
+export function useTodayData() {
+  const date = useTodayDate();
+
   const {
     data: stepData,
     error: stepError,
@@ -78,7 +81,9 @@ export function useTodayData(date: Date = new Date()) {
 
   useEffect(() => {
     if (sleepData) {
-      const sleep = sleepData.reduce((sum, r) => sum + r.value, 0);
+      const totalDuration = sleepData.reduce((sum, r) => sum + r.value, 0);
+      // Giả sử muốn tính time theo giờ
+      const sleep = totalDuration / 60;
       setTodayData((prev) => ({ ...prev, sleep }));
     }
   }, [sleepData]);

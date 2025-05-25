@@ -1,8 +1,6 @@
 import StatusCell from "@/components/card/StatusCell";
 import { useTodayData } from "@/hooks/useTodayHealthData";
-import {
-  setTodayData
-} from "@/store/features/user/todayDataSlice";
+import { setTodayData } from "@/store/features/user/todayDataSlice";
 import { setUserInfo } from "@/store/features/user/userSlice";
 import { useGetUserQuery } from "@/store/services/apis/userApi";
 import { colors } from "@/theme/colors";
@@ -28,7 +26,7 @@ export default function Index() {
   const { data, isLoading, error } = useGetUserQuery();
   const [BMI, setBMI] = useState<number>(0);
 
-  const { todayData } = useTodayData(new Date());
+  const { todayData } = useTodayData();
 
   useEffect(() => {
     if (todayData) {
@@ -169,7 +167,7 @@ export default function Index() {
                   value: BMI * 10,
                   color: colors.primary2,
                   label: {
-                    text: BMI.toString() + "%",
+                    text: BMI.toFixed(2) + "%",
                     stroke: "#fff",
                     fontSize: 10,
                     fontWeight: 200,
@@ -219,14 +217,14 @@ export default function Index() {
               >
                 <StatusCell
                   type="Sleep"
-                  values={[{ unit: "h", value: todayData.sleep.toString() }]}
+                  values={[{ unit: "h", value: todayData.sleep.toFixed(2) }]}
                   image={require("../../../assets/images/Sleep-Graph.png")}
                 />
                 <StatusCell
                   type="Calories & Water"
                   values={[
-                    { unit: "kCal", value: todayData.calories.toString() },
-                    { unit: "L", value: todayData.water.toString() },
+                    { unit: "kCal", value: todayData.calories.toFixed(2) },
+                    { unit: "L", value: todayData.water.toFixed(2) },
                   ]}
                   image={require("../../../assets/images/basicfood.png")}
                 />
@@ -241,14 +239,14 @@ export default function Index() {
                 <StatusCell
                   type="Walking"
                   values={[
-                    { unit: "step", value: todayData.walking.toString() },
+                    { unit: "step", value: todayData.walking.toFixed(2) },
                   ]}
                   image={require("../../../assets/images/statusCellWalking.png")}
                 />
                 <StatusCell
                   type="Activities"
                   values={[
-                    { unit: "h", value: todayData.activityTime.toString() },
+                    { unit: "h", value: todayData.activityTime.toFixed(2) },
                   ]}
                   image={require("../../../assets/images/statusActivities.png")}
                 />
