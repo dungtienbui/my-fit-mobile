@@ -12,6 +12,7 @@ import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Keyboard,
   Platform,
   SafeAreaView,
   StyleSheet,
@@ -21,7 +22,7 @@ import {
   View,
 } from "react-native";
 import Toast from "react-native-toast-message";
-import Icon from "react-native-vector-icons/Feather"; // Dùng 'Feather' hoặc 'FontAwesome', v.v.
+import Icon from "react-native-vector-icons/Feather";
 
 const SleepTimeForm = () => {
   const [startDate, setStartDate] = useState(new Date());
@@ -69,7 +70,7 @@ const SleepTimeForm = () => {
     }
   };
 
-  const formatDate = (date: Date) => date.toLocaleDateString("vi-VN"); // hoặc Intl.DateTimeFormat nếu cần tùy chỉnh sâu hơn
+  const formatDate = (date: Date) => date.toLocaleDateString("vi-VN");
 
   const formatTime = (date: Date) =>
     `${date.getHours().toString().padStart(2, "0")}:${date
@@ -110,15 +111,15 @@ const SleepTimeForm = () => {
 
   const handleSave = async () => {
     const sleepStart = combineDateAndTime(startDate, startTime);
-    // const sleepEnd = combineDateAndTime(endDate, endTime);
+    const sleepEnd = combineDateAndTime(endDate, endTime);
 
-    // const sleepMinutes = getHoursBetween(sleepStart, sleepEnd);
+    const sleepMinutes = getHoursBetween(sleepStart, sleepEnd);
 
-    // await saveData({
-    //   metricType: "sleep",
-    //   value: sleepMinutes,
-    //   date: sleepStart,
-    // });
+    await saveData({
+      metricType: "sleep",
+      value: sleepMinutes,
+      date: sleepStart,
+    });
   };
 
   useEffect(() => {
@@ -153,6 +154,23 @@ const SleepTimeForm = () => {
               router.back();
             }}
           />
+        }
+        TrailingIconButton={
+          showPicker ? (
+            <Text
+              style={{
+                ...fonts.titleMedium,
+                color: colors.primary2,
+                marginRight: 10,
+              }}
+              onPress={() => {
+                setShowPicker(false);
+                Keyboard.dismiss();
+              }}
+            >
+              Cancel
+            </Text>
+          ) : undefined
         }
         style={{ marginTop: Platform.OS === "android" ? 40 : 0 }}
       />

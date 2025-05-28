@@ -1,165 +1,213 @@
-import React, { useState } from 'react';
+import CustomButton from "@/components/button/CustomButton";
+import IconButton from "@/components/button/IconButton";
+import ScreenTitle from "@/components/screen/ScreenTitle";
+import { useUpdateGoalMutation } from "@/store/services/apis/goalsApi";
+import { colors } from "@/theme/colors";
+import { fonts } from "@/theme/fonts";
+import { Ionicons } from "@expo/vector-icons";
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from "@react-native-community/datetimepicker";
+import { router, useLocalSearchParams } from "expo-router";
+import React, { useEffect, useState } from "react";
 import {
-  View,
-  Text,
-  TouchableOpacity,
+  ActivityIndicator,
+  Keyboard,
+  Platform,
   StyleSheet,
+  Text,
   TextInput,
-  Alert,
-} from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
+
+function safeParseDate(
+  input?: string,
+  fallback: string = "2025-01-01T00:00:00.000Z"
+): Date {
+  const date = new Date(input ?? fallback);
+  if (isNaN(date.getTime())) {
+    console.warn(`Ngày không hợp lệ: "${input}", dùng mặc định: "${fallback}"`);
+    return new Date(fallback);
+  }
+  return date;
+}
 
 const Sleep = () => {
-  const [startHour, setStartHour] = useState('');
-  const [startMinute, setStartMinute] = useState('');
-  const [endHour, setEndHour] = useState('');
-  const [endMinute, setEndMinute] = useState('');
+  const [setGoal, { data, isLoading, error }] = useUpdateGoalMutation();
 
-  const router = useRouter();
+  const {
+    id = "",
+    start = "2025-01-01T00:00:00.000Z",
+    end = "2025-01-01T08:00:00.000Z",
+    frequency = "Daily",
+  } = useLocalSearchParams<{
+    id: string;
+    start: string;
+    end: string;
+    frequency: string;
+  }>();
 
-  const isValidHour = (h: number) => h >= 0 && h <= 23;
-  const isValidMinute = (m: number) => m >= 0 && m <= 59;
+  const [startTime, setStartTime] = useState(safeParseDate(start));
+  const [endTime, setEndTime] = useState(safeParseDate(end));
 
-  const onChangeHour = (
-    text: string,
-    setFunc: React.Dispatch<React.SetStateAction<string>>
-  ) => {
-    const num = text.replace(/[^0-9]/g, '');
-    if (num === '') {
-      setFunc('');
-      return;
-    }
-    const val = Math.min(parseInt(num, 10), 23);
-    setFunc(val.toString());
+  const [showPicker, setShowPicker] = useState(false);
+  const [targetField, setTargetField] = useState<"startTime" | "endTime">();
+
+  const handleOpenPicker = (target: typeof targetField) => {
+    setTargetField(target);
+    setShowPicker(true);
   };
 
-  const onChangeMinute = (
-    text: string,
-    setFunc: React.Dispatch<React.SetStateAction<string>>
-  ) => {
-    const num = text.replace(/[^0-9]/g, '');
-    if (num === '') {
-      setFunc('');
-      return;
+  const handleChange = (_: DateTimePickerEvent, selectedDate?: Date) => {
+    if (!selectedDate) return;
+    setShowPicker(false);
+
+    switch (targetField) {
+      case "startTime":
+        setStartTime(selectedDate);
+        break;
+      case "endTime":
+        setEndTime(selectedDate);
+        break;
     }
-    const val = Math.min(parseInt(num, 10), 59);
-    setFunc(val.toString());
   };
 
-  const handleSave = () => {
-    if (
-      startHour === '' ||
-      startMinute === '' ||
-      endHour === '' ||
-      endMinute === ''
-    ) {
-      Alert.alert('Lỗi', 'Vui lòng nhập đầy đủ thời gian bắt đầu và kết thúc');
-      return;
-    }
+  const formatDate = (date: Date) => date.toLocaleDateString("vi-VN");
 
-    const sh = parseInt(startHour, 10);
-    const sm = parseInt(startMinute, 10);
-    const eh = parseInt(endHour, 10);
-    const em = parseInt(endMinute, 10);
+  const formatTime = (date: Date) =>
+    `${date.getHours().toString().padStart(2, "0")}:${date
+      .getMinutes()
+      .toString()
+      .padStart(2, "0")}`;
 
-    if (!isValidHour(sh) || !isValidMinute(sm) || !isValidHour(eh) || !isValidMinute(em)) {
-      Alert.alert('Lỗi', 'Giờ hoặc phút không hợp lệ (giờ: 0-23, phút: 0-59)');
-      return;
-    }
-    const startTotal = sh * 60 + sm;
-    const endTotal = eh * 60 + em;
+  const handleSave = async () => {
+    console.log("startTime: ", startTime);
+    console.log("endTime: ", endTime);
 
-    if (startTotal >= endTotal) {
-      Alert.alert('Lỗi', 'Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc');
-      return;
-    }
-
-    Alert.alert(
-      'Đã lưu',
-      `Thời gian bắt đầu: ${startHour.padStart(2, '0')}:${startMinute.padStart(
-        2,
-        '0'
-      )}\nThời gian kết thúc: ${endHour.padStart(2, '0')}:${endMinute.padStart(2, '0')}`
-    );
+    await setGoal({
+      id: id,
+      data: {
+        activity_sleeping: {
+          start: startTime,
+          end: endTime,
+          frequency: "Daily",
+        },
+      },
+    });
   };
 
-  const handleGoBack = () => {
-    router.back();
-  };
+  useEffect(() => {
+    if (data) {
+      Toast.show({
+        text1: "Success",
+        text2: "Your goal has saved successfully.",
+        type: "success",
+      });
+      console.log("data: ", data);
+      router.back();
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (error) {
+      Toast.show({
+        text1: "Ooh!",
+        text2: "Some wrong happended. Please try again!",
+        type: "error",
+      });
+      console.error("error: ", error);
+    }
+  }, [error]);
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header - Quay về */}
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
-          <MaterialIcons name="arrow-back" size={20} color="#fff" />
-        </TouchableOpacity>
-        <Text style={styles.title}>Sleep</Text>
-      </View>
+    <SafeAreaView style={{ flex: 1 }}>
+      <ScreenTitle
+        title="Sleep time"
+        style={{ marginTop: Platform.OS === "android" ? 40 : 0 }}
+        LeadingIconButton={
+          <IconButton
+            icon={<Ionicons name="arrow-back" size={15} color="#fff" />}
+            onPress={() => {
+              router.back();
+            }}
+          />
+        }
+        TrailingIconButton={
+          showPicker ? (
+            <Text
+              style={{
+                ...fonts.titleMedium,
+                color: colors.primary2,
+                marginRight: 10,
+              }}
+              onPress={() => {
+                setShowPicker(false);
+                Keyboard.dismiss();
+              }}
+            >
+              Cancel
+            </Text>
+          ) : undefined
+        }
+      />
 
-      {/* Input Start Time */}
-      <View style={styles.row}>
-        <Text style={styles.label}>Start Time</Text>
-        <View style={styles.timeInputs}>
-          <TextInput
-            style={styles.timeInput}
-            keyboardType="number-pad"
-            maxLength={2}
-            value={startHour}
-            onChangeText={(text) => onChangeHour(text, setStartHour)}
-            placeholder="HH"
-            placeholderTextColor="#999"
-            textAlign="center"
-          />
-          <Text style={styles.colon}>:</Text>
-          <TextInput
-            style={styles.timeInput}
-            keyboardType="number-pad"
-            maxLength={2}
-            value={startMinute}
-            onChangeText={(text) => onChangeMinute(text, setStartMinute)}
-            placeholder="MM"
-            placeholderTextColor="#999"
-            textAlign="center"
-          />
+      <View style={styles.container}>
+        {/* Số lượng */}
+        <View style={styles.contentContainer}>
+          {/* Sleep Start Time */}
+
+          <View style={styles.content}>
+            <Text style={styles.title}>Bed time</Text>
+            <TouchableOpacity
+              onPress={() => handleOpenPicker("startTime")}
+              style={styles.pickTimeContainer}
+            >
+              <TextInput
+                style={styles.timeValue}
+                value={formatTime(startTime)}
+                editable={false}
+              />
+              <Ionicons name="time-outline" size={30} />
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.content}>
+            <Text style={styles.title}>Wake up time</Text>
+            <TouchableOpacity
+              onPress={() => handleOpenPicker("endTime")}
+              style={styles.pickTimeContainer}
+            >
+              <TextInput
+                style={styles.timeValue}
+                value={formatTime(endTime)}
+                editable={false}
+              />
+              <Ionicons name="time-outline" size={30} />
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
 
-      {/* Input End Time */}
-      <View style={styles.row}>
-        <Text style={styles.label}>End Time</Text>
-        <View style={styles.timeInputs}>
-          <TextInput
-            style={styles.timeInput}
-            keyboardType="number-pad"
-            maxLength={2}
-            value={endHour}
-            onChangeText={(text) => onChangeHour(text, setEndHour)}
-            placeholder="HH"
-            placeholderTextColor="#999"
-            textAlign="center"
+        {/* DateTimePicker */}
+        {showPicker && (
+          <DateTimePicker
+            value={targetField === "startTime" ? startTime : endTime}
+            mode="time"
+            is24Hour={true}
+            display={Platform.OS === "ios" ? "spinner" : "default"}
+            onChange={handleChange}
           />
-          <Text style={styles.colon}>:</Text>
-          <TextInput
-            style={styles.timeInput}
-            keyboardType="number-pad"
-            maxLength={2}
-            value={endMinute}
-            onChangeText={(text) => onChangeMinute(text, setEndMinute)}
-            placeholder="MM"
-            placeholderTextColor="#999"
-            textAlign="center"
-          />
-        </View>
-      </View>
+        )}
 
-      {/* Nút Save - dưới cùng */}
-      <View style={styles.footer}>
-        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-          <Text style={styles.saveButtonText}>Save</Text>
-        </TouchableOpacity>
+        <CustomButton
+          title={"Save"}
+          onPress={() => {
+            handleSave();
+          }}
+          leadingIcon={isLoading && <ActivityIndicator color="#fff" />}
+        />
       </View>
     </SafeAreaView>
   );
@@ -170,85 +218,37 @@ export default Sleep;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 16,
-    backgroundColor: '#fff',
-    //paddingTop: 24,
+    justifyContent: "space-between",
+    alignItems: "center",
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 40,
+  contentContainer: {
+    marginTop: 50,
+    width: "80%",
+    gap: 40,
   },
-  backButton: {
-    backgroundColor: '#38CE38', // màu xanh lá
-    borderRadius: 8,
-    padding: 6,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 10,
+  content: {
+    // borderWidth: 1,
+    width: "100%",
+    gap: 10,
   },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    ...fonts.headlineMedium,
   },
-
-  row: {
-    marginBottom: 36,
+  pickTimeContainer: {
+    borderWidth: 1,
+    borderRadius: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignContent: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
   },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
+  timeValue: {
+    ...fonts.headlineSmall,
+    lineHeight: 28,
   },
-
-  timeInputs: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 8,
-  },
-
-  timeInput: {
-    backgroundColor: '#F0FDF4', // nền xanh lá nhẹ
-    borderRadius: 12,
-    width: 70,
-    height: 50,
-    fontSize: 28,
-    fontWeight: '600',
-    color: '#134E07', // xanh đậm
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    shadowColor: '#2F855A',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-
-  colon: {
-    fontSize: 32,
-    fontWeight: '700',
-    color: '#134E07',
-    marginHorizontal: 6,
-  },
-
-  footer: {
-    position: 'absolute',
-    bottom: 20,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-  },
-  saveButton: {
-    width: '90%',
-    paddingVertical: 16,
-    backgroundColor: '#38CE38',
-    borderRadius: 25,
-    alignItems: 'center',
-  },
-  saveButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+  itemContainer: {
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

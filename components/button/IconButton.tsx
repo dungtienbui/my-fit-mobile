@@ -1,8 +1,7 @@
 // components/IconButton.tsx
-import React from "react";
-import { TouchableOpacity, StyleSheet, ViewStyle } from "react-native";
-import { IconProps } from "@expo/vector-icons/build/createIconSet";
 import { colors } from "@/theme/colors";
+import React from "react";
+import { StyleSheet, TouchableOpacity, ViewStyle } from "react-native";
 
 type IconButtonProps = {
   icon: React.ReactElement;

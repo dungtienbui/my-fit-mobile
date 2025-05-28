@@ -1,62 +1,144 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons'; // Thêm thư viện icon
-import { useRouter } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import CustomButton from "@/components/button/CustomButton";
+import IconButton from "@/components/button/IconButton";
+import ScreenTitle from "@/components/screen/ScreenTitle";
+import { useUpdateGoalMutation } from "@/store/services/apis/goalsApi";
+import { fonts } from "@/theme/fonts";
+import { Ionicons } from "@expo/vector-icons"; // Thêm thư viện icon
+import { router, useLocalSearchParams } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 
-const Food = ({ navigation }: any) => {
-  const [value, setValue] = useState(2000);
-  const router = useRouter();
+const Food = () => {
+  const [setGoal, { data, isLoading, error }] = useUpdateGoalMutation();
+
+  const {
+    id = "",
+    value = "2000",
+    unit = "calories",
+    frequency = "Daily",
+  } = useLocalSearchParams<{
+    id: string;
+    value: string;
+    unit: string;
+    frequency: string;
+  }>();
+
+  if (id == "") {
+    Toast.show({
+      text1: "Ooh! Some wrong happend.",
+      text2: "Please logout and login again!",
+    });
+  }
+
+  const [valueState, setValueState] = useState(
+    isNaN(parseInt(value)) ? 2 : parseInt(value)
+  );
 
   const handleDecrease = () => {
-    if (value > 0) {
-      setValue(value - 100);
+    if (valueState >= 100) {
+      setValueState(valueState - 100);
     }
   };
 
   const handleIncrease = () => {
-    setValue(value + 100);
+    setValueState(valueState + 100);
   };
 
-  const handleSave = () => {
-    alert(`Saved: ${value} Calor`);
+  const handleSave = async () => {
+    const nutritionFood = {
+      value: valueState,
+      unit: "calories",
+      frequency: "Daily",
+    };
+
+    await setGoal({
+      id: id,
+      data: {
+        nutrition_food: nutritionFood,
+      },
+    });
   };
 
-  const handleGoBack = () => {
-    router.back(); 
-  };
+  useEffect(() => {
+    if (data) {
+      Toast.show({
+        text1: "Success",
+        text2: "Your goal has saved successfully.",
+        type: "success",
+      });
+      console.log("data: ", data);
+      router.back();
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (error) {
+      Toast.show({
+        text1: "Ooh!",
+        text2: "Some wrong happended. Please try again!",
+        type: "error",
+      });
+      console.error("error: ", error);
+    }
+  }, [error]);
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header - Quay về */}
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
-          <MaterialIcons name="arrow-back" size={20} color="#fff" />
-        </TouchableOpacity>
-        <Text style={styles.title}>Food</Text>
-      </View>
+    <SafeAreaView style={{ flex: 1 }}>
+      <ScreenTitle
+        title="Calories intake"
+        style={{ marginTop: Platform.OS === "android" ? 40 : 0 }}
+        LeadingIconButton={
+          <IconButton
+            icon={<Ionicons name="arrow-back" size={15} color="#fff" />}
+            onPress={() => {
+              router.back();
+            }}
+          />
+        }
+      />
 
-      {/* Số lượng */}
-      <View style={styles.content}>
-        <Text style={styles.number}>{value}</Text>
-        <Text style={styles.perDay}>Calor</Text>
-      </View>
+      <View style={styles.container}>
+        {/* Số lượng */}
+        <View style={styles.contentContainer}>
+          <View style={styles.content}>
+            <Text style={styles.number}>{valueState}</Text>
+            <Text style={styles.unit}>{unit}</Text>
+            <Text style={styles.frequency}>{frequency}</Text>
+          </View>
 
-      {/* Nút - + */}
-      <View style={styles.buttonsContainer}>
-        <TouchableOpacity style={styles.diffButton} onPress={handleDecrease}>
-          <Text style={styles.diffText}>-</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.diffButton} onPress={handleIncrease}>
-          <Text style={styles.diffText}>+</Text>
-        </TouchableOpacity>
-      </View>
+          {/* Nút - + */}
+          <View style={styles.buttonsContainer}>
+            <TouchableOpacity
+              style={styles.diffButton}
+              onPress={handleDecrease}
+            >
+              <Text style={styles.diffText}>-</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.diffButton}
+              onPress={handleIncrease}
+            >
+              <Text style={styles.diffText}>+</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
 
-      {/* Nút Save - dưới cùng, cách bottom 20 */}
-      <View style={styles.footer}>
-        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-          <Text style={styles.saveButtonText}>Save</Text>
-        </TouchableOpacity>
+        <CustomButton
+          title={"Save"}
+          onPress={() => {
+            handleSave();
+          }}
+          leadingIcon={isLoading && <ActivityIndicator color="#fff" />}
+        />
       </View>
     </SafeAreaView>
   );
@@ -67,79 +149,44 @@ export default Food;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 16,
-    backgroundColor: '#fff',
-    //paddingTop: 24, 
+    justifyContent: "space-between",
+    alignItems: "center",
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 40,
-  },
-  backButton: {
-    backgroundColor: '#38CE38', // Màu primary (xanh lá nhạt)
-    borderRadius: 8,
-    padding: 6,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 10,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-
   content: {
-    alignItems: 'center',
-    marginBottom: 40,
+    alignItems: "center",
+  },
+  contentContainer: {
+    marginTop: 80,
   },
   number: {
-    fontSize: 70,
-    fontWeight: 'normal',
-    color: '#000000000000', // màu trung bình, không đậm
+    ...fonts.displayLarge,
+    fontWeight: "normal",
   },
-  perDay: {
-    fontSize: 16,
-    marginTop: 10,
-    color: '#000000000000', // màu trung tính nhẹ
+  frequency: {
+    ...fonts.bodyLarge,
+    marginTop: 5,
+  },
+  unit: {
+    ...fonts.titleLarge,
+    marginTop: 5,
   },
 
   buttonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginBottom: 60,
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 30,
   },
   diffButton: {
-    backgroundColor: '#E5E5E5', // màu nền nút
+    backgroundColor: "#E5E5E5", // màu nền nút
     borderRadius: 10,
     paddingVertical: 10, // thay đổi padding theo chiều cao
-    paddingHorizontal: 75, // 150px = 75 * 2
+    paddingHorizontal: 70, // 150px = 75 * 2
     marginHorizontal: 8,
-    borderColor: '#F5F5F5',
+    borderColor: "#F5F5F5",
   },
   diffText: {
     fontSize: 40,
-    fontWeight: 'bold',
-    color: '#4B5563',
-  },
-
-  footer: {
-    position: 'absolute',
-    bottom: 20,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-  },
-  saveButton: {
-    width: '90%',
-    paddingVertical: 16,
-    backgroundColor: '#38CE38', // màu primary
-    borderRadius: 25, // bo góc nhiều
-    alignItems: 'center',
-  },
-  saveButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
+    color: "#4B5563",
   },
 });
