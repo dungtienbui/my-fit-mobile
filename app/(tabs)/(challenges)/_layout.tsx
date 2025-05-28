@@ -1,5 +1,8 @@
 import { Stack } from "expo-router";
 
 export default function ChallengesLayout() {
-  return <Stack />;
+  return (
+    <Stack screenOptions={{ headerShown: false }} />
+  );
 }
+
