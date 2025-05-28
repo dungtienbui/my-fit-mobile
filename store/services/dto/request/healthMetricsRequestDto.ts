@@ -1,4 +1,4 @@
-type MealType = "breakfast" | "lunch" | "dinner" | "snack" | "other";
+import { MealType, NormalMetricType } from "../type/someDtoType";
 
 interface MealDetails {
   mealType: MealType;
@@ -17,7 +17,7 @@ interface BaseMetric {
 }
 
 interface NormalHealthMetric extends BaseMetric {
-  metricType: "steps" | "water" | "weight" | "height" | "sleep";
+  metricType: NormalMetricType;
 }
 
 interface CaloriesHealthMetric extends BaseMetric {

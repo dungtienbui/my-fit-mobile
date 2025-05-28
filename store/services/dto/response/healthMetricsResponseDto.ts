@@ -1,13 +1,4 @@
-type MealType = "breakfast" | "lunch" | "dinner" | "snack" | "other";
-
-type MetricType =
-  | "steps"
-  | "calories"
-  | "water"
-  | "exercise"
-  | "weight"
-  | "height"
-  | "sleep";
+import { MealType, MetricType } from "../type/someDtoType";
 
 interface MealDetails {
   mealType: MealType;

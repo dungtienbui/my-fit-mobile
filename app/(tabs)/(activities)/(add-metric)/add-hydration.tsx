@@ -1,5 +1,6 @@
 import CustomButton from "@/components/button/CustomButton";
 import IconButton from "@/components/button/IconButton";
+import CustomInput from "@/components/form/CustomInput";
 import ScreenTitle from "@/components/screen/ScreenTitle";
 import { useCreateHealthMetricMutation } from "@/store/services/apis/healthMetricsApi";
 import { colors } from "@/theme/colors";
@@ -12,22 +13,21 @@ import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Keyboard,
   Platform,
   SafeAreaView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 import Toast from "react-native-toast-message";
 import Icon from "react-native-vector-icons/Feather"; // Dùng 'Feather' hoặc 'FontAwesome', v.v.
 
-const SleepTimeForm = () => {
-  const [startDate, setStartDate] = useState(new Date());
-  const [startTime, setStartTime] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
-  const [endTime, setEndTime] = useState(new Date());
+const AddHydration = () => {
+  const [waterDate, setWaterDate] = useState(new Date());
+  const [waterTime, setWaterTime] = useState(new Date());
+  const [waterIntake, setWaterIntake] = useState("0");
 
   const [
     saveData,
@@ -36,9 +36,9 @@ const SleepTimeForm = () => {
 
   const [showPicker, setShowPicker] = useState(false);
   const [mode, setMode] = useState<"date" | "time">("date");
-  const [targetField, setTargetField] = useState<
-    "startDate" | "startTime" | "endDate" | "endTime"
-  >();
+  const [targetField, setTargetField] = useState<"waterDate" | "waterTime">(
+    "waterDate"
+  );
 
   const handleOpenPicker = (
     pickerMode: "date" | "time",
@@ -54,17 +54,11 @@ const SleepTimeForm = () => {
     setShowPicker(false);
 
     switch (targetField) {
-      case "startDate":
-        setStartDate(selectedDate);
+      case "waterDate":
+        setWaterDate(selectedDate);
         break;
-      case "startTime":
-        setStartTime(selectedDate);
-        break;
-      case "endDate":
-        setEndDate(selectedDate);
-        break;
-      case "endTime":
-        setEndTime(selectedDate);
+      case "waterTime":
+        setWaterTime(selectedDate);
         break;
     }
   };
@@ -78,57 +72,48 @@ const SleepTimeForm = () => {
       .padStart(2, "0")}`;
 
   const combineDateAndTime = (date: Date, time: Date) => {
-    console.log("date: ", date.toLocaleString("vi-VN"));
-    console.log("time: ", time.toLocaleString("vi-VN"));
-
     const combined = new Date(date);
     combined.setHours(time.getHours());
     combined.setMinutes(time.getMinutes());
     combined.setSeconds(0);
     combined.setMilliseconds(0);
-
-    console.log("combined: ", combined.toLocaleString("vi-VN"));
-    console.log("combined: ", combined);
-
-    const today = new Date();
-    // today.setHours(0, 0, 0, 0);
-
-    console.log("today: ", today.toLocaleString("vi-VN"));
-    console.log("today: ", today);
-
     return combined;
   };
 
-  function getHoursBetween(date1: Date, date2: Date): number {
-    if (!(date1 instanceof Date) || !(date2 instanceof Date)) {
-      return 0;
-    }
-    const diffMs = Math.abs(date2.getTime() - date1.getTime());
-    const hours = diffMs / (1000 * 60);
-    return hours;
-  }
+  const isInteger = (value: string) => {
+    return /^\d+$/.test(value);
+  };
 
   const handleSave = async () => {
-    const sleepStart = combineDateAndTime(startDate, startTime);
-    // const sleepEnd = combineDateAndTime(endDate, endTime);
+    const waterDateTime = combineDateAndTime(waterDate, waterTime);
 
-    // const sleepMinutes = getHoursBetween(sleepStart, sleepEnd);
+    if (!isInteger(waterIntake)) {
+      Toast.show({
+        text1: "Ohh! Water intake is invalid.",
+        text2: "Please enter valid calories!",
+        type: "error",
+      });
+      return;
+    }
 
-    // await saveData({
-    //   metricType: "sleep",
-    //   value: sleepMinutes,
-    //   date: sleepStart,
-    // });
+    const waterIntakeNumber = parseInt(waterIntake, 10);
+
+    await saveData({
+      metricType: "water",
+      value: waterIntakeNumber / 1000,
+      date: waterDateTime,
+    });
   };
 
   useEffect(() => {
     if (savedData) {
       Toast.show({
         text1: "Success",
-        text2: "Your sleep time has saved successfully.",
+        text2: "Your water intake time has saved successfully.",
         type: "success",
       });
       router.back();
+      console.warn("savedData: ", savedData);
     }
   }, [savedData]);
 
@@ -139,13 +124,14 @@ const SleepTimeForm = () => {
         text2: "Some wrong happended. Please try again!",
         type: "error",
       });
+      console.error("saveError: ", saveError);
     }
   }, [saveError]);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScreenTitle
-        title="Add Sleep"
+        title="Add Calories"
         LeadingIconButton={
           <IconButton
             icon={<Ionicons name="arrow-back" size={15} color="#fff" />}
@@ -153,6 +139,23 @@ const SleepTimeForm = () => {
               router.back();
             }}
           />
+        }
+        TrailingIconButton={
+          showPicker ? (
+            <Text
+              style={{
+                ...fonts.titleMedium,
+                color: colors.primary2,
+                marginRight: 10,
+              }}
+              onPress={() => {
+                setShowPicker(false);
+                Keyboard.dismiss();
+              }}
+            >
+              Cancel
+            </Text>
+          ) : undefined
         }
         style={{ marginTop: Platform.OS === "android" ? 40 : 0 }}
       />
@@ -164,79 +167,60 @@ const SleepTimeForm = () => {
         }}
       >
         <View style={styles.container}>
-          {/* Sleep Start Date */}
-          <Text style={styles.label}>Sleep start date</Text>
-          <View style={styles.inputGroup}>
-            <TextInput
-              style={styles.input}
-              value={formatDate(startDate)}
-              editable={false}
-            />
-            <TouchableOpacity
-              onPress={() => handleOpenPicker("date", "startDate")}
-            >
-              <Icon name="calendar" size={24} color="#333" />
-            </TouchableOpacity>
-          </View>
-
-          {/* Sleep Start Time */}
-          <Text style={styles.label}>Sleep start time</Text>
-          <View style={styles.inputGroup}>
-            <TextInput
-              style={styles.input}
-              value={formatTime(startTime)}
-              editable={false}
-            />
-            <TouchableOpacity
-              onPress={() => handleOpenPicker("time", "startTime")}
-            >
-              <Icon name="clock" size={24} color="#333" />
-            </TouchableOpacity>
-          </View>
-
-          {/* Sleep End Date */}
-          <Text style={styles.label}>Sleep end date</Text>
-          <View style={styles.inputGroup}>
-            <TextInput
-              style={styles.input}
-              value={formatDate(endDate)}
-              editable={false}
-            />
-            <TouchableOpacity
-              onPress={() => handleOpenPicker("date", "endDate")}
-            >
-              <Icon name="calendar" size={24} color="#333" />
-            </TouchableOpacity>
-          </View>
-
-          {/* Sleep End Time */}
-          <Text style={styles.label}>Sleep end date</Text>
-          <View style={styles.inputGroup}>
-            <TextInput
-              style={styles.input}
-              value={formatTime(endTime)}
-              editable={false}
-            />
-            <TouchableOpacity
-              onPress={() => handleOpenPicker("time", "endTime")}
-            >
-              <Icon name="clock" size={24} color="#333" />
-            </TouchableOpacity>
-          </View>
+          <CustomInput
+            value={waterIntake}
+            onChangeText={(text) => {
+              if (!isInteger(text)) {
+                Toast.show({
+                  text1: "Ohh!",
+                  text2: "Water intake is invalid. Please enter number!",
+                  type: "error",
+                });
+              }
+              setWaterIntake(text);
+            }}
+            placeholder="Water intake..."
+            label="Water intake"
+            width="100%"
+            trailingIcon={<Text>ml</Text>}
+            keyboardType="numeric"
+          />
+          <CustomInput
+            label="Drink date"
+            value={formatDate(waterDate)}
+            onChangeText={() => {}}
+            readonly={true}
+            placeholder={"DD/MM/YYYY"}
+            trailingIcon={
+              <TouchableOpacity
+                onPress={() => handleOpenPicker("date", "waterDate")}
+              >
+                <Icon name="calendar" size={20} color="#333" />
+              </TouchableOpacity>
+            }
+            width="100%"
+          />
+          <CustomInput
+            label="Drink time"
+            value={formatTime(waterTime)}
+            onChangeText={() => {}}
+            readonly={true}
+            placeholder={"HH:mm"}
+            trailingIcon={
+              <TouchableOpacity
+                onPress={() => handleOpenPicker("time", "waterTime")}
+              >
+                <Icon name="clock" size={20} color="#333" />
+              </TouchableOpacity>
+            }
+            width="100%"
+          />
         </View>
 
         {/* DateTimePicker */}
         {showPicker && (
           <DateTimePicker
-            value={
-              targetField === "startDate"
-                ? startDate
-                : targetField === "startTime"
-                ? startTime
-                : targetField === "endDate"
-                ? endDate
-                : endTime
-            }
+            value={targetField === "waterDate" ? waterDate : waterTime}
             mode={mode}
             is24Hour={true}
             display={Platform.OS === "ios" ? "spinner" : "default"}
@@ -297,4 +281,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SleepTimeForm;
+export default AddHydration;

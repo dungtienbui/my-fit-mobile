@@ -4,6 +4,8 @@ import { fonts } from "@/theme/fonts";
 import React, { useState } from "react";
 import {
   DimensionValue,
+  InputModeOptions,
+  KeyboardType,
   StyleSheet,
   Text,
   TextInput,
@@ -23,6 +25,7 @@ interface CustomInputProps {
   helperText?: string;
   helperIcon?: React.ReactNode;
   disabled?: boolean;
+  readonly?: boolean;
   style?: ViewStyle;
   inputStyle?: TextStyle;
   labelStyle?: TextStyle;
@@ -31,6 +34,8 @@ interface CustomInputProps {
   inputBorder?: number;
   isEmailInput?: boolean;
   inputStatus?: "default" | "error" | "success";
+  keyboardType?: KeyboardType;
+  inputMode?: InputModeOptions;
 }
 
 const CustomInput: React.FC<CustomInputProps> = ({
@@ -44,6 +49,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
   helperText,
   helperIcon,
   disabled = false,
+  readonly = false,
   style,
   inputStyle,
   labelStyle,
@@ -52,6 +58,8 @@ const CustomInput: React.FC<CustomInputProps> = ({
   inputBorder = 4,
   isEmailInput,
   inputStatus = "default",
+  keyboardType = "default",
+  inputMode = "none",
 }) => {
   const [isFocused, setIsFocused] = useState(false);
 
@@ -96,7 +104,9 @@ const CustomInput: React.FC<CustomInputProps> = ({
           editable={!disabled}
           autoCapitalize="none"
           autoCorrect={false}
-          keyboardType={isEmailInput ? "email-address" : "default"}
+          keyboardType={isEmailInput ? "email-address" : keyboardType}
+          readOnly={readonly}
+          inputMode={inputMode}
         />
         {trailingIcon && (
           <View style={styles.iconContainer}>{trailingIcon}</View>
@@ -134,7 +144,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 1,
     borderColor: colors.tertiary3,
-    backgroundColor: "#fff",
+    // backgroundColor: "#fff",
     paddingHorizontal: 12,
     paddingVertical: 8,
   },

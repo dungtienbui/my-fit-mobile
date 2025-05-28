@@ -16,6 +16,38 @@ export default function Index() {
       >
         Add sleep
       </Text>
+      <Text
+        onPress={() => {
+          router.push("/(tabs)/(activities)/(add-metric)/add-calories");
+        }}
+        style={styles.routerButton}
+      >
+        Add calories
+      </Text>
+      <Text
+        onPress={() => {
+          router.push("/(tabs)/(activities)/(add-metric)/add-hydration");
+        }}
+        style={styles.routerButton}
+      >
+        Add hydration
+      </Text>
+      <Text
+        onPress={() => {
+          router.push("/(tabs)/(activities)/(add-metric)/add-body-measurement");
+        }}
+        style={styles.routerButton}
+      >
+        Add body
+      </Text>
+      <Text
+        onPress={() => {
+          router.push("/(tabs)/(activities)/(add-metric)/add-exercise");
+        }}
+        style={styles.routerButton}
+      >
+        Add exe
+      </Text>
     </View>
   );
 }
