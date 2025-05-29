@@ -217,8 +217,15 @@ export default function Index() {
               >
                 <StatusCell
                   type="Sleep"
-                  values={[{ unit: "h", value: todayData.sleep.toFixed(2) }]}
+                  values={[
+                    {
+                      unit: "h",
+                      value: Math.floor(todayData.sleep / 60).toFixed(0),
+                    },
+                    { unit: "m", value: (todayData.sleep % 60).toFixed(0) },
+                  ]}
                   image={require("../../../assets/images/Sleep-Graph.png")}
+                  joiner=" "
                 />
                 <StatusCell
                   type="Calories & Water"
@@ -239,7 +246,7 @@ export default function Index() {
                 <StatusCell
                   type="Walking"
                   values={[
-                    { unit: "step", value: todayData.walking.toFixed(2) },
+                    { unit: "step", value: todayData.walking.toString() },
                   ]}
                   image={require("../../../assets/images/statusCellWalking.png")}
                 />
@@ -257,6 +264,21 @@ export default function Index() {
       </ScrollView>
     </SafeAreaView>
   );
+}
+
+function formatMinutesToHoursMinutes(totalMinutes: number): string {
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+
+  if (hours !== 0 && minutes !== 0) {
+    return `${hours}h ${minutes}m`;
+  } else if (hours !== 0) {
+    return `${hours} hours`;
+  } else if (minutes !== 0) {
+    return `${minutes} minutes`;
+  } else {
+    return "0 hours";
+  }
 }
 
 const styles = StyleSheet.create({

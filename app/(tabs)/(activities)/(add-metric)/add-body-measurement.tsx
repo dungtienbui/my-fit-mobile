@@ -7,19 +7,19 @@ import { colors } from "@/theme/colors";
 import { fonts } from "@/theme/fonts";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import DateTimePicker, {
-    DateTimePickerEvent,
+  DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    Keyboard,
-    Platform,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Keyboard,
+  Platform,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import Toast from "react-native-toast-message";
@@ -116,7 +116,7 @@ const AddBodyMeasurement = () => {
     if (savedData) {
       Toast.show({
         text1: "Success",
-        text2: "Your measurement time has saved successfully.",
+        text2: "Your measurement has saved successfully.",
         type: "success",
       });
       router.back();

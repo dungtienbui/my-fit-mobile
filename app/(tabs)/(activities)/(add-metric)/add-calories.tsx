@@ -134,7 +134,7 @@ const AddCalories = () => {
     if (savedData) {
       Toast.show({
         text1: "Success",
-        text2: "Your calories time has saved successfully.",
+        text2: "Your calories has saved successfully.",
         type: "success",
       });
       router.back();

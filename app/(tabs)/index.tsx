@@ -1,7 +1,8 @@
 import CustomButton from "@/components/button/CustomButton";
 import { logout } from "@/store/features/auth/authSlice";
+import * as Sentry from "@sentry/react-native";
 import { Link } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
+import { Button, StyleSheet, Text, View } from "react-native";
 import { useDispatch } from "react-redux";
 
 export default function Index() {
@@ -12,6 +13,13 @@ export default function Index() {
       <Link href="/(tabs)/(home)" style={styles.button}>
         Go to Home screen
       </Link>
+
+      <Button
+        title="Try!"
+        onPress={() => {
+          Sentry.captureException(new Error("First error"));
+        }}
+      />
 
       <CustomButton
         title="Logout"

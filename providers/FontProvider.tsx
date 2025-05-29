@@ -1,18 +1,19 @@
-import React, { useCallback, useEffect } from "react";
-import { View } from "react-native";
-import * as SplashScreen from "expo-splash-screen";
 import {
-  useFonts,
   Roboto_400Regular,
   Roboto_500Medium,
   Roboto_700Bold,
+  useFonts,
 } from "@expo-google-fonts/roboto";
-
-SplashScreen.preventAutoHideAsync();
+import * as SplashScreen from "expo-splash-screen";
+import React, { useCallback } from "react";
+import { View } from "react-native";
 
 interface FontProviderProps {
   children: React.ReactNode;
 }
+
+// Keep the splash screen visible while we fetch resources
+SplashScreen.preventAutoHideAsync();
 
 export default function FontProvider({ children }: FontProviderProps) {
   const [fontsLoaded] = useFonts({

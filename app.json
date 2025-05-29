@@ -33,6 +33,14 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
+      ],
+      [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "project": "my-fit-mobile",
+          "organization": "ho-chi-minh-city-university-fq"
+        }
       ]
     ],
     "experiments": {
