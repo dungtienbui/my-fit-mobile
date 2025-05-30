@@ -109,7 +109,7 @@ const AddHydration = () => {
     if (savedData) {
       Toast.show({
         text1: "Success",
-        text2: "Your water intake time has saved successfully.",
+        text2: "Your water intake has saved successfully.",
         type: "success",
       });
       router.back();

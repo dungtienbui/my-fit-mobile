@@ -82,8 +82,8 @@ export function useTodayData() {
   useEffect(() => {
     if (sleepData) {
       const totalDuration = sleepData.reduce((sum, r) => sum + r.value, 0);
-      // Giả sử muốn tính time theo giờ
-      const sleep = totalDuration / 60;
+      // Giả sử muốn tính time theo phút
+      const sleep = totalDuration;
       setTodayData((prev) => ({ ...prev, sleep }));
     }
   }, [sleepData]);

@@ -7,19 +7,19 @@ import { colors } from "@/theme/colors";
 import { fonts } from "@/theme/fonts";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import DateTimePicker, {
-    DateTimePickerEvent,
+  DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    Keyboard,
-    Platform,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Keyboard,
+  Platform,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import Toast from "react-native-toast-message";
@@ -37,8 +37,12 @@ const AddExercise = () => {
   const [exerciseMinutes, setExerciseMinutes] = useState(0);
 
   const [
-    saveData,
-    { data: savedData, isLoading: saveIsLoading, error: saveError },
+    saveExerciseData,
+    { data: exerciseSaved, isLoading: exerciseIsLoading, error: exerciseError },
+  ] = useCreateHealthMetricMutation();
+  const [
+    saveStepsData,
+    { data: stepsSaved, isLoading: stepsIsLoading, error: stepsError },
   ] = useCreateHealthMetricMutation();
 
   const [showPicker, setShowPicker] = useState(false);
@@ -113,40 +117,74 @@ const AddExercise = () => {
       return;
     }
 
-    await saveData({
+    const durationMinutes = exerciseHours * 60 + exerciseMinutes;
+
+    await saveExerciseData({
       metricType: "exercise",
       value: distanceNumber,
       date: exerciseDateTime,
       exerciseDetails: {
         activityName: exerciseName,
-        duration: exerciseHours * 60 + exerciseMinutes,
+        duration: durationMinutes,
         notes: exerciseNote,
       },
     });
+
+    if (exerciseName === "walking" || exerciseName === "running") {
+      const stepsCount = estimateSteps(
+        distanceNumber,
+        durationMinutes,
+        exerciseName
+      );
+      await saveStepsData({
+        metricType: "steps",
+        value: stepsCount,
+        date: exerciseDateTime,
+      });
+    }
   };
 
   useEffect(() => {
-    if (savedData) {
+    if (exerciseSaved) {
       Toast.show({
         text1: "Success",
-        text2: "Your calories time has saved successfully.",
+        text2: "Your exercise has saved successfully.",
         type: "success",
       });
+
       router.back();
-      console.warn("savedData: ", savedData);
+      console.warn("exerciseSaved: ", exerciseSaved);
     }
-  }, [savedData]);
+  }, [exerciseSaved]);
 
   useEffect(() => {
-    if (saveError) {
+    if (stepsSaved) {
+      Toast.show({
+        text1: "Success",
+        text2: "Your steps has calculated and saved successfully.",
+        type: "success",
+      });
+      console.warn("stepsSaved: ", stepsSaved);
+    }
+  }, [stepsSaved]);
+
+  useEffect(() => {
+    if (exerciseError) {
       Toast.show({
         text1: "Ooh!",
-        text2: "Some wrong happended. Please try again!",
+        text2: "Some wrong happended when saving exercise. Please try again!",
         type: "error",
       });
-      console.error("saveError: ", saveError);
+      console.error("exerciseError: ", exerciseError);
+    } else if (stepsError) {
+      Toast.show({
+        text1: "Ooh!",
+        text2: "Some wrong happended when saving step. Please try again!",
+        type: "error",
+      });
+      console.error("stepsError: ", stepsError);
     }
-  }, [saveError]);
+  }, [exerciseError, stepsError]);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -377,7 +415,9 @@ const AddExercise = () => {
           }}
           style={{ marginBottom: 20, position: "absolute", bottom: 0 }}
           leadingIcon={
-            saveIsLoading ? <ActivityIndicator color="#fff" /> : undefined
+            exerciseIsLoading || stepsIsLoading ? (
+              <ActivityIndicator color="#fff" />
+            ) : undefined
           }
         />
       </View>
@@ -421,6 +461,34 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+
+function estimateSteps(
+  distance: number, // in meters
+  duration: number, // in minutes
+  activityType: "running" | "walking" | "cycling"
+): number {
+  if (distance <= 0 || duration <= 0) return 0;
+
+  let stepsPerKm: number;
+
+  switch (activityType) {
+    case "walking":
+      stepsPerKm = 1282; // ~0.78m per step
+      break;
+    case "running":
+      stepsPerKm = 1000; // ~1m per step
+      break;
+    case "cycling":
+      return 0; // or a custom value if needed
+    default:
+      return 0;
+  }
+
+  const distanceKm = distance / 1000;
+  const estimatedSteps = distanceKm * stepsPerKm;
+
+  return Math.round(estimatedSteps);
+}
 
 const exerciseMinuteOptions = Array.from({ length: 12 }, (_, i) => {
   const value = i * 5;

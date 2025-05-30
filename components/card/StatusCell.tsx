@@ -20,9 +20,16 @@ type StatusCellProps = {
   }[];
   image: ImageSourcePropType;
   size?: DimensionValue;
+  joiner?: string;
 };
 
-const StatusCell = ({ type, values, image, size = 150 }: StatusCellProps) => {
+const StatusCell = ({
+  type,
+  values,
+  image,
+  size = 150,
+  joiner,
+}: StatusCellProps) => {
   return (
     <View
       style={[styles.container, { width: size, height: size }, shadow.medium]}
@@ -40,7 +47,9 @@ const StatusCell = ({ type, values, image, size = 150 }: StatusCellProps) => {
           )}
           horizontal={true}
           ItemSeparatorComponent={() => (
-            <Text style={{ marginTop: 8, marginHorizontal: 2 }}>&</Text>
+            <Text style={{ marginTop: 8, marginHorizontal: 2 }}>
+              {joiner ?? "&"}
+            </Text>
           )}
         />
       </View>

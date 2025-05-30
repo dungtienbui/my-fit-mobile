@@ -87,16 +87,6 @@ const SleepTimeForm = () => {
     combined.setMinutes(time.getMinutes());
     combined.setSeconds(0);
     combined.setMilliseconds(0);
-
-    console.log("combined: ", combined.toLocaleString("vi-VN"));
-    console.log("combined: ", combined);
-
-    const today = new Date();
-    // today.setHours(0, 0, 0, 0);
-
-    console.log("today: ", today.toLocaleString("vi-VN"));
-    console.log("today: ", today);
-
     return combined;
   };
 

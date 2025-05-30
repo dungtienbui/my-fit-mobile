@@ -205,14 +205,14 @@ export default function TodayTarget() {
                 typeTarget="Sleeping"
                 target={
                   goals?.activity_sleeping
-                    ? getHoursBetween(
+                    ? getSleepDuration(
                         new Date(goals?.activity_sleeping.start),
                         new Date(goals?.activity_sleeping.end)
                       )
                     : todayData.sleep.toFixed(2)
                 }
-                todayValue={todayData.sleep.toFixed(2)}
-                unit="h"
+                todayValue={formatMinutesToHoursMinutes(todayData.sleep)}
+                unit=""
                 image={require("../../../assets/images/today-target/sleeping.png")}
                 width="100%"
               />
@@ -295,13 +295,54 @@ const styles = StyleSheet.create({
   },
 });
 
-function getHoursBetween(date1: Date, date2: Date): string {
+function getSleepDuration(date1: Date, date2: Date): string {
   if (!(date1 instanceof Date) || !(date2 instanceof Date)) {
-    return "0";
+    return "0 hours";
   }
-  const diffMs = Math.abs(date2.getTime() - date1.getTime());
-  const hours = diffMs / (1000 * 60 * 60);
-  return hours.toFixed(2); // Trả về string, ví dụ: "7.50"
+
+  const h1 = date1.getHours();
+  const m1 = date1.getMinutes();
+
+  const h2 = date2.getHours();
+  const m2 = date2.getMinutes();
+
+  let totalMinutes = 0;
+
+  if (h2 > h1 || (h2 === h1 && m2 >= m1)) {
+    // same day or later in the day
+    totalMinutes = (h2 - h1) * 60 + (m2 - m1);
+  } else {
+    // crosses midnight
+    totalMinutes = (24 - h1) * 60 - m1 + h2 * 60 + m2;
+  }
+
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+
+  if (hours !== 0 && minutes !== 0) {
+    return `${hours}h ${minutes}m`;
+  } else if (hours !== 0) {
+    return `${hours} hours`;
+  } else if (minutes !== 0) {
+    return `${minutes} minutes`;
+  } else {
+    return "0 hours";
+  }
+}
+
+function formatMinutesToHoursMinutes(totalMinutes: number): string {
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+
+  if (hours !== 0 && minutes !== 0) {
+    return `${hours}h ${minutes}m`;
+  } else if (hours !== 0) {
+    return `${hours} hours`;
+  } else if (minutes !== 0) {
+    return `${minutes} minutes`;
+  } else {
+    return "0 hours";
+  }
 }
 
 // const {
