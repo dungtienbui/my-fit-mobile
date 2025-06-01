@@ -95,7 +95,7 @@ const Water = () => {
     <SafeAreaView style={{ flex: 1 }}>
       <ScreenTitle
         title="Water"
-        style={{ marginTop: Platform.OS === "android" ? 40 : 0 }}
+        // style={{ marginTop: Platform.OS === "android" ? 40 : 0 }}
         LeadingIconButton={
           <IconButton
             icon={<Ionicons name="arrow-back" size={15} color="#fff" />}
@@ -151,6 +151,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-between",
     alignItems: "center",
+    paddingBottom: Platform.OS === "android" ? 20 : 0,
   },
   content: {
     alignItems: "center",

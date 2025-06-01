@@ -20,7 +20,7 @@ export type HealthMetricResponseDto = {
 
   value: number; // Giá trị của chỉ số
 
-  date: Date; // Ngày ghi nhận chỉ số
+  date: string; // Ngày ghi nhận chỉ số
 
   mealDetails?: MealDetails;
 

@@ -1,264 +1,381 @@
-export const unstable_settings = {
-  headerShown: false,
+import IconButton from "@/components/button/IconButton";
+import RecordCard from "@/components/card/RecordCard";
+import ScreenTitle from "@/components/screen/ScreenTitle";
+import { useGetHealthMetricsByDateRangeAndTypeQuery } from "@/store/services/apis/healthMetricsApi";
+import { HealthMetricResponseDto } from "@/store/services/dto/response/healthMetricsResponseDto";
+import { colors } from "@/theme/colors";
+import { fonts } from "@/theme/fonts";
+import { Ionicons } from "@expo/vector-icons";
+import {
+  endOfWeek,
+  format,
+  isToday,
+  isYesterday,
+  parseISO,
+  startOfWeek,
+} from "date-fns";
+import { router } from "expo-router";
+import React, { useEffect, useMemo, useState } from "react";
+import {
+  ActivityIndicator,
+  Platform,
+  Pressable,
+  SafeAreaView,
+  SectionList,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+
+type SectionData = {
+  title: string;
+  data: HealthMetricResponseDto[];
 };
 
-import React, { useMemo, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, ScrollView } from "react-native";
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { LineChart } from "react-native-chart-kit";
-import { format, startOfWeek, addDays, isSameWeek, subWeeks } from "date-fns";
-import { useRouter } from "expo-router";
-import { useGetHealthMetricsQuery } from "@/store/services/apis/healthMetricsApi";
+const DaysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-const SCREEN_WIDTH = Dimensions.get("window").width - 40;
-
-function getLastTenWeeks() {
-  // Trả về mảng bắt đầu của 10 tuần gần nhất (từ tuần hiện tại lùi lại)
-  let arr = [];
-  for (let i = 9; i >= 0; i--) {
-    arr.push(startOfWeek(subWeeks(new Date(), i), { weekStartsOn: 0 }));
-  }
-  return arr;
-}
-
-export default function BodyMeasurementScreen() {
-  const router = useRouter();
-  const [tab, setTab] = useState<"week" | "month">("week");
-  const { data = [], isLoading } = useGetHealthMetricsQuery();
-
-  // Lấy data metric (nếu API trả về array of object)
-  const weightEntries = useMemo(
-    () => data.filter((it) => it.metricType === "weight"),
-    [data]
-  );
-  const heightEntries = useMemo(
-    () => data.filter((it) => it.metricType === "height"),
-    [data]
-  );
-  const neckEntries = useMemo(
-    () => data.filter((it) => it.metricType === "neck"),
-    [data]
-  );
-  const waistEntries = useMemo(
-    () => data.filter((it) => it.metricType === "waist"),
-    [data]
-  );
-  const hipEntries = useMemo(
-    () => data.filter((it) => it.metricType === "hip"),
-    [data]
+const BodyMeasurementScreen = () => {
+  const [typeMeasurement, setTypeMeasurement] = useState<"height" | "weight">(
+    "height"
   );
 
-  // Dữ liệu chart: 10 tuần gần nhất
-  const weeks = getLastTenWeeks();
-  const chartLabels = weeks.map((_, i) => i.toString());
-  const chartWeights = weeks.map((w) => {
-    // Lấy entry weight thuộc tuần này (cùng tuần)
-    const entry = weightEntries.find((it) => isSameWeek(new Date(it.date), w, { weekStartsOn: 0 }));
-    return entry ? Number(entry.value) : 0;
+  const { weekStart, weekEnd } = useMemo(() => {
+    const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
+    const weekEnd = endOfWeek(new Date(), { weekStartsOn: 1 });
+    return { weekStart, weekEnd };
+  }, []);
+
+  const [dataHeightRender, setHeightDataRender] = useState<SectionData[]>([]);
+  const [dataWeightRender, setWeightDataRender] = useState<SectionData[]>([]);
+
+  console.log("weekStart: ", weekStart.toISOString());
+  console.log("weekEnd: ", weekEnd.toISOString());
+
+  const {
+    data: heightData,
+    isLoading: heightLoading,
+    error: heightError,
+  } = useGetHealthMetricsByDateRangeAndTypeQuery({
+    metricType: "height",
+    start: weekStart,
+    end: weekEnd,
   });
 
-  // Thông tin tuần này (gần nhất)
-  const latestHeight = heightEntries.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
-  const latestWeight = weightEntries.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
-  // So sánh với tuần trước
-  const prevWeek = subWeeks(new Date(), 1);
-  const prevWeight = weightEntries.find((it) => isSameWeek(new Date(it.date), prevWeek, { weekStartsOn: 0 }));
+  const {
+    data: weightData,
+    isLoading: weightLoading,
+    error: weightError,
+  } = useGetHealthMetricsByDateRangeAndTypeQuery({
+    metricType: "weight",
+    start: weekStart,
+    end: weekEnd,
+  });
 
-  // Neck-waist-hip ratios tuần này (có thể phải lấy thêm field cho phù hợp)
-  const latestNeck = neckEntries.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
-  const latestWaist = waistEntries.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
-  const latestHip = hipEntries.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+  const formatSectionTitle = (dateStr: string): string => {
+    const date = parseISO(dateStr);
+    if (isToday(date)) return "Today";
+    if (isYesterday(date)) return "Yesterday";
+    return format(date, "EEE, MM/dd/yyyy"); // Example: "Fri, 05/30/2025"
+  };
+
+  const groupByDate = (items: HealthMetricResponseDto[]): SectionData[] => {
+    const grouped: Record<string, HealthMetricResponseDto[]> = {};
+
+    items.forEach((item) => {
+      const title = formatSectionTitle(item.date);
+      if (!grouped[title]) grouped[title] = [];
+      grouped[title].push(item);
+    });
+
+    // Convert to array and sort sections by date descending
+    return Object.entries(grouped)
+      .map(([title, data]) => ({ title, data }))
+      .sort((a, b) => {
+        const dateA = parseISO(a.data[0].date);
+        const dateB = parseISO(b.data[0].date);
+        return dateB.getTime() - dateA.getTime();
+      });
+  };
+
+  useEffect(() => {
+    if (heightData) {
+      // console.log("data: ", heightData);
+      const groupedData = groupByDate(heightData);
+      // console.log("groupedData: ", JSON.stringify(groupedData));
+      setHeightDataRender(groupedData);
+    }
+
+    if (weightData) {
+      // console.log("data: ", weightData);
+      const groupedData = groupByDate(weightData);
+      // console.log("groupedData: ", JSON.stringify(groupedData));
+      setWeightDataRender(groupedData);
+    }
+  }, [heightData, weightData]);
+
+  useEffect(() => {
+    if (heightError) {
+      console.error("Height error: ", heightError);
+    }
+
+    if (weightError) {
+      console.error("Weight error: ", heightError);
+    }
+  }, [heightError, weightError]);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <MaterialIcons name="arrow-back-ios" size={24} color="#2ecc71" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Body measurements</Text>
-        <TouchableOpacity
-          style={[styles.headerIcon, styles.headerRightIcon]}
-          onPress={() => router.push("/(tabs)/(activities)/(add-metric)/add-body-measurement")}
-        >
-          <MaterialIcons name="add" size={26} color="#fff" />
-        </TouchableOpacity>
-      </View>
+      <ScreenTitle
+        title="Body measurements"
+        LeadingIconButton={
+          <IconButton
+            icon={<Ionicons name="arrow-back" size={15} color="#fff" />}
+            onPress={() => {
+              router.back();
+            }}
+          />
+        }
+        TrailingIconButton={
+          <IconButton
+            icon={<Ionicons name="add" size={15} color="#fff" />}
+            onPress={() => {
+              router.push(
+                "/(tabs)/(activities)/(add-metric)/add-body-measurement"
+              );
+            }}
+          />
+        }
+        style={{ marginTop: Platform.OS === "android" ? 40 : 0 }}
+      />
 
-      {/* Tabs */}
-      <View style={styles.tabs}>
-        <TouchableOpacity style={[styles.tab, tab === "week" && styles.tabActive]} onPress={() => setTab("week")}>
-          <Text style={tab === "week" ? styles.tabTextActive : styles.tabText}>Week</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.tab, tab === "month" && styles.tabActive]} onPress={() => setTab("month")}>
-          <Text style={tab === "month" ? styles.tabTextActive : styles.tabText}>Month</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Chart title + arrows */}
-      <View style={styles.chartNav}>
-        <TouchableOpacity>
-          <Ionicons name="chevron-back" size={28} color="#23C55E" />
-        </TouchableOpacity>
-        <Text style={styles.chartTitle}>Last ten week</Text>
-        <TouchableOpacity>
-          <Ionicons name="chevron-forward" size={28} color="#23C55E" />
-        </TouchableOpacity>
-      </View>
-
-      {/* Chart */}
-      <View style={{ paddingHorizontal: 0, marginTop: 4 }}>
-        <LineChart
-          data={{
-            labels: chartLabels,
-            datasets: [
-              {
-                data: chartWeights,
-                color: (opacity = 1) => `rgba(39, 202, 74, ${opacity})`,
-                strokeWidth: 2,
-              },
-            ],
-          }}
-          width={SCREEN_WIDTH}
-          height={180}
-          yAxisSuffix=""
-          withVerticalLines={true}
-          withDots={false}
-          withShadow={true}
-          withInnerLines={true}
-          chartConfig={{
-            backgroundColor: "#fff",
-            backgroundGradientFrom: "#fff",
-            backgroundGradientTo: "#fff",
-            decimalPlaces: 0,
-            color: (opacity = 1) => `rgba(39,202,74,${opacity})`,
-            labelColor: (opacity = 1) => `rgba(44,62,80,${opacity})`,
-            style: { borderRadius: 16 },
-            fillShadowGradient: "#23C55E",
-            fillShadowGradientOpacity: 0.4,
-            propsForDots: { r: "0" },
-            propsForBackgroundLines: { stroke: "#e3e3e3" },
-          }}
-          bezier
-          style={{ borderRadius: 12, marginLeft: -20 }}
-        />
-        <Text style={{ alignSelf: "center", color: "#444", marginTop: 8, fontSize: 14 }}>
-          Your Weight Chart (kg/per week)
-        </Text>
-      </View>
-
-      {/* Info */}
-      <ScrollView style={styles.listWrapper}>
-        <Text style={[styles.sectionTitle, { marginTop: 18 }]}>This week</Text>
-        {/* Height */}
-        <View style={styles.infoCard}>
-          <Text style={styles.infoTitle}>Height</Text>
-          <Text style={styles.infoValue}>{latestHeight ? `${latestHeight.value} cm` : "--"}</Text>
-          <Text style={styles.infoNote}>Update only if needed</Text>
+      {/* Progress tuần */}
+      <View style={styles.progressWrapper}>
+        <View style={styles.weekNav}>
+          <Ionicons name="chevron-back" size={30} color={colors.primary1} />
+          {(typeMeasurement === "height" && heightLoading) ||
+          (typeMeasurement === "weight" && weightLoading) ? (
+            <ActivityIndicator />
+          ) : (
+            <Text style={styles.thisWeek}>This week</Text>
+          )}
+          <Ionicons name="chevron-forward" size={30} color={colors.primary1} />
         </View>
-        {/* Weight */}
-        <View style={styles.infoCard}>
-          <Text style={styles.infoTitle}>Weight</Text>
-          <Text style={styles.infoValue}>{latestWeight ? `${latestWeight.value} kg` : "--"}</Text>
-          <Text style={[styles.infoNote, { color: "#23C55E" }]}>
-            {latestWeight && prevWeight ? `+${latestWeight.value - prevWeight.value} kg from last week` : ""}
-          </Text>
+        <View style={styles.tabContainer}>
+          <Pressable
+            onPress={() => {
+              setTypeMeasurement("height");
+            }}
+            style={[
+              styles.tabItemContainer,
+              typeMeasurement === "height" && styles.tabItemContainerSelected,
+            ]}
+          >
+            <Text
+              style={[
+                styles.tabText,
+                typeMeasurement === "height" && styles.tabTextSelected,
+              ]}
+            >
+              Height
+            </Text>
+          </Pressable>
+          <Pressable
+            onPress={() => {
+              setTypeMeasurement("weight");
+            }}
+            style={[
+              styles.tabItemContainer,
+              typeMeasurement === "weight" && styles.tabItemContainerSelected,
+            ]}
+          >
+            <Text
+              style={[
+                styles.tabText,
+                typeMeasurement === "weight" && styles.tabTextSelected,
+              ]}
+            >
+              Weight
+            </Text>
+          </Pressable>
         </View>
-        {/* Neck - Waist - Hip */}
-        <View style={styles.infoCard}>
-          <Text style={styles.infoTitle}>Neck - Waist - Hip</Text>
-          <Text style={styles.infoValue}>
-            {latestNeck?.value ?? "--"}-{latestWaist?.value ?? "--"}-{latestHip?.value ?? "--"} cm
+        {/* <View style={styles.progressBox}>
+          <Text style={styles.progressText}>
+            <Text style={styles.checkedDayNumber}>
+              {dateChecked.reduce((acc, curr) => acc + (curr ? 1 : 0), 0)}
+            </Text>{" "}
+            of <Text style={styles.checkedDayNumber}>5</Text> exercise days to
+            goal
           </Text>
-          <Text style={[styles.infoNote, { color: "#23C55E" }]}>
-            Your ratios are on point
-          </Text>
-        </View>
-      </ScrollView>
-    </View>
+          <View style={styles.daysRow}>
+            {DaysOfWeek.map((dayName, idx) => (
+              <View key={idx} style={{ alignItems: "center", gap: 5 }}>
+                <View
+                  style={[
+                    styles.dayCircle,
+                    dateChecked[idx]
+                      ? { backgroundColor: colors.primary1 }
+                      : { backgroundColor: colors.secondary1 },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.dayLabel,
+                      dateChecked[idx] ? { color: "#fff" } : { color: "#000" },
+                    ]}
+                  >
+                    {dayName}
+                  </Text>
+                  {dateChecked[idx] && (
+                    <Ionicons name="checkmark" size={16} color="#fff" />
+                  )}
+                </View>
+                {idx === TodayDayNumber - 1 ? (
+                  <Ionicons
+                    name="thumbs-up"
+                    size={10}
+                    color={colors.secondary2}
+                  />
+                ) : undefined}
+              </View>
+            ))}
+          </View>
+        </View> */}
+      </View>
+
+      {/* data tuần */}
+      <SectionList
+        contentContainerStyle={{
+          paddingLeft: 15,
+          paddingRight: 20,
+          paddingBottom: 20,
+        }}
+        sections={
+          typeMeasurement === "height"
+            ? dataHeightRender
+            : typeMeasurement === "weight"
+            ? dataWeightRender
+            : []
+        }
+        keyExtractor={(item, index) => item.date + index}
+        renderItem={({ item }) => (
+          <RecordCard
+            value={
+              typeMeasurement === "height"
+                ? `${item.value.toString()} cm`
+                : typeMeasurement === "weight"
+                ? `${item.value.toFixed(2)} kg`
+                : "N/A"
+            }
+            datetime={` ${format(new Date(item.date), "HH:mm - dd/mm/yyyy")}`}
+            recordType={typeMeasurement}
+            width="100%"
+          />
+        )}
+        renderSectionHeader={({ section: { title } }) => (
+          <Text style={styles.sectionHeader}>{title}</Text>
+        )}
+        ListEmptyComponent={
+          <View style={{ marginTop: 25 }}>
+            <Text
+              style={{
+                ...fonts.titleMedium,
+                textAlign: "center",
+                color: colors.tertiary3,
+              }}
+            >
+              No record data
+            </Text>
+          </View>
+        }
+      />
+    </SafeAreaView>
   );
+};
+
+{
+  /* <RecordCard
+  value={`${item.value ? `${item.value} km` : "0 km"} - ${
+    item.exerciseDetails?.duration ?? 0
+  } min`}
+  datetime={format(new Date(item.date), "h:mm a")}
+  recordType={capitalize(item.exerciseDetails?.activityName ?? "Exercise")}
+  width="100%"
+/>; */
 }
 
+export default BodyMeasurementScreen;
+
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff", paddingTop: 36 },
-  header: {
+  progressWrapper: {
+    padding: 10,
+    alignItems: "center",
+  },
+  weekNav: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 14,
     justifyContent: "space-between",
-    marginBottom: 2,
-    minHeight: 52,
+    marginVertical: 10,
+    width: "80%",
   },
-  headerIcon: {
-    width: 38,
-    height: 38,
-    borderRadius: 9,
-    backgroundColor: "#23C55E",
-    justifyContent: "center",
-    alignItems: "center",
+  thisWeek: {
+    ...fonts.titleMedium,
+    color: colors.secondary2,
   },
-  headerRightIcon: {
-    backgroundColor: "#23C55E",
+  progressBox: {
+    width: "100%",
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 8,
+    paddingTop: 20,
+    paddingBottom: 10,
+    paddingHorizontal: 10,
+    gap: 10,
   },
-  headerTitle: { fontSize: 22, fontWeight: "bold", color: "#222", flex: 1, textAlign: "center" },
-  tabs: {
+  progressText: {
+    ...fonts.bodyMedium,
+  },
+  checkedDayNumber: {
+    ...fonts.displaySmall,
+  },
+  daysRow: {
     flexDirection: "row",
-    justifyContent: "flex-start",
-    paddingHorizontal: 20,
-    marginBottom: 4,
+    justifyContent: "space-between",
+  },
+  dayCircle: {
+    width: 35,
+    height: 60,
+    borderRadius: 15,
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "column",
+  },
+  dayLabel: {
+    ...fonts.titleSmall,
+  },
+  sectionHeader: {
+    ...fonts.titleMedium,
+    paddingLeft: 10,
     marginTop: 10,
   },
-  tab: {
-    paddingVertical: 6,
-    paddingHorizontal: 26,
-    borderBottomWidth: 2,
-    borderBottomColor: "transparent",
-    marginRight: 12,
+  tabContainer: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-around",
   },
-  tabActive: {
-    borderBottomColor: "#23C55E",
+  tabItemContainer: {
+    flexGrow: 1,
+    paddingVertical: 8,
   },
   tabText: {
-    fontSize: 18,
-    color: "#aaa",
-    fontWeight: "600",
+    ...fonts.titleSmall,
+    textAlign: "center",
   },
-  tabTextActive: {
-    fontSize: 18,
-    color: "#23C55E",
-    fontWeight: "bold",
+  tabItemContainerSelected: {
+    borderBottomWidth: 2,
+    borderBottomColor: colors.secondary2,
   },
-  chartNav: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 18,
-    marginTop: 12,
-    marginBottom: 2,
+  tabTextSelected: {
+    color: colors.secondary2,
   },
-  chartTitle: {
-    alignSelf: "center",
-    color: "#23C55E",
-    fontWeight: "bold",
-    fontSize: 16,
-    marginTop: 0,
-  },
-  listWrapper: { paddingHorizontal: 14, flex: 1, marginTop: 10 },
-  sectionTitle: { fontSize: 16, fontWeight: "bold", marginBottom: 8, marginTop: 14 },
-  infoCard: {
-    borderWidth: 1,
-    borderColor: "#e6e6e6",
-    borderRadius: 14,
-    backgroundColor: "#fff",
-    marginBottom: 13,
-    padding: 15,
-    elevation: 1,
-    shadowColor: "#bbb",
-    shadowOpacity: 0.04,
-    shadowRadius: 2,
-    shadowOffset: { width: 0, height: 1 },
-  },
-  infoTitle: { fontSize: 18, fontWeight: "bold", color: "#222" },
-  infoValue: { fontSize: 17, fontWeight: "bold", color: "#222", marginVertical: 4 },
-  infoNote: { fontSize: 14, color: "#e67e22" },
 });

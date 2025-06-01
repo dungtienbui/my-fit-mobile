@@ -115,184 +115,181 @@ export default function Index() {
   };
 
   return (
-    <>
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-      <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-        <ScreenTitle
-          title="Your goals"
-          style={{ marginTop: Platform.OS === "android" ? 40 : 0 }}
-        />
-        <ScrollView
-          style={styles.container}
-          contentContainerStyle={{ paddingBottom: 40 }}
-        >
-          <View style={styles.sectionGroup}>
-            <Text style={styles.sectionTitle}>Activity</Text>
-            <Card
-              label="Total exercise time"
-              value={goals?.activity_exerciseHours?.value}
-              frequency={goals?.activity_exerciseHours?.frequency}
-              unit={goals?.activity_exerciseHours?.unit}
-              onPress={() =>
-                handleNavigate("activity", {
-                  value: goals?.activity_exerciseHours?.value ?? 0,
-                  unit: goals?.activity_exerciseHours?.unit ?? "hours",
-                  frequency:
-                    goals?.activity_exerciseHours?.frequency ?? "Daily",
-                })
-              }
-              isLoading={isGoalsLoading}
-              isSetGoal={goals?.activity_exerciseHours ? false : true}
-            />
-            <Card
-              label="Steps"
-              value={goals?.activity_steps?.value}
-              frequency={goals?.activity_steps?.frequency}
-              unit={goals?.activity_steps?.unit}
-              onPress={() =>
-                handleNavigate("steps", {
-                  value: goals?.activity_steps?.value ?? 0,
-                  unit: goals?.activity_steps?.unit ?? "steps",
-                  frequency: goals?.activity_steps?.frequency ?? "Daily",
-                })
-              }
-              isLoading={isGoalsLoading}
-              isSetGoal={goals?.activity_steps ? false : true}
-            />
-            <Card
-              label="Sleeping"
-              value={sleepTimeCombine(
-                goals?.activity_sleeping?.start,
-                goals?.activity_sleeping?.end
-              )}
-              frequency={goals?.activity_sleeping?.frequency}
-              onPress={() => {
-                let startDate = new Date(
-                  goals?.activity_sleeping?.start ?? "2025-01-01T00:00:00.000Z"
-                );
-                let endDate = new Date(
-                  goals?.activity_sleeping?.end ?? "2025-01-01T08:00:00.000Z"
-                );
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+      <StatusBar
+        barStyle="dark-content"
+        translucent
+        backgroundColor="transparent"
+      />
+      <ScreenTitle title="Your goals" />
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={{ paddingBottom: 40 }}
+      >
+        <View style={styles.sectionGroup}>
+          <Text style={styles.sectionTitle}>Activity</Text>
+          <Card
+            label="Total exercise time"
+            value={goals?.activity_exerciseHours?.value}
+            frequency={goals?.activity_exerciseHours?.frequency}
+            unit={goals?.activity_exerciseHours?.unit}
+            onPress={() =>
+              handleNavigate("activity", {
+                value: goals?.activity_exerciseHours?.value ?? 0,
+                unit: goals?.activity_exerciseHours?.unit ?? "hours",
+                frequency: goals?.activity_exerciseHours?.frequency ?? "Daily",
+              })
+            }
+            isLoading={isGoalsLoading}
+            isSetGoal={goals?.activity_exerciseHours ? false : true}
+          />
+          <Card
+            label="Steps"
+            value={goals?.activity_steps?.value}
+            frequency={goals?.activity_steps?.frequency}
+            unit={goals?.activity_steps?.unit}
+            onPress={() =>
+              handleNavigate("steps", {
+                value: goals?.activity_steps?.value ?? 0,
+                unit: goals?.activity_steps?.unit ?? "steps",
+                frequency: goals?.activity_steps?.frequency ?? "Daily",
+              })
+            }
+            isLoading={isGoalsLoading}
+            isSetGoal={goals?.activity_steps ? false : true}
+          />
+          <Card
+            label="Sleeping"
+            value={sleepTimeCombine(
+              goals?.activity_sleeping?.start,
+              goals?.activity_sleeping?.end
+            )}
+            frequency={goals?.activity_sleeping?.frequency}
+            onPress={() => {
+              let startDate = new Date(
+                goals?.activity_sleeping?.start ?? "2025-01-01T00:00:00.000Z"
+              );
+              let endDate = new Date(
+                goals?.activity_sleeping?.end ?? "2025-01-01T08:00:00.000Z"
+              );
 
-                if (isNaN(startDate.getTime())) {
-                  console.warn("Start date không hợp lệ");
-                  startDate = new Date("2025-01-01T00:00:00.000Z");
-                }
+              if (isNaN(startDate.getTime())) {
+                console.warn("Start date không hợp lệ");
+                startDate = new Date("2025-01-01T00:00:00.000Z");
+              }
 
-                if (isNaN(endDate.getTime())) {
-                  console.warn("End date không hợp lệ");
-                  endDate = new Date("2025-01-01T08:00:00.000Z");
-                }
+              if (isNaN(endDate.getTime())) {
+                console.warn("End date không hợp lệ");
+                endDate = new Date("2025-01-01T08:00:00.000Z");
+              }
 
-                // rồi mới dùng startDate, endDate
-                handleNavigate("sleep", undefined, undefined, {
-                  start: startDate.toISOString(),
-                  end: endDate.toISOString(),
-                  frequency: goals?.activity_sleeping?.frequency ?? "Daily",
-                });
-              }}
-              isTimeRange
-              isLoading={isGoalsLoading}
-              isSetGoal={goals?.activity_sleeping ? false : true}
-            />
-          </View>
+              // rồi mới dùng startDate, endDate
+              handleNavigate("sleep", undefined, undefined, {
+                start: startDate.toISOString(),
+                end: endDate.toISOString(),
+                frequency: goals?.activity_sleeping?.frequency ?? "Daily",
+              });
+            }}
+            isTimeRange
+            isLoading={isGoalsLoading}
+            isSetGoal={goals?.activity_sleeping ? false : true}
+          />
+        </View>
 
-          <View style={styles.sectionGroup}>
-            <Text style={styles.sectionTitle}>Health</Text>
-            <Card
-              label="Weight"
-              value={
-                goals?.health_weight?.target
-                  ? goals.health_weight.target.toFixed(1)
-                  : undefined
-              }
-              frequency="Target value"
-              unit={goals?.health_weight?.unit}
-              onPress={() =>
-                handleNavigate("weight", undefined, {
-                  target: goals?.health_weight?.target ?? 0,
-                  unit: goals?.health_weight?.unit ?? "calories",
-                })
-              }
-              isLoading={isGoalsLoading}
-              isSetGoal={goals?.health_weight ? false : true}
-            />
-            <Card
-              label="Body fat percentage"
-              value={
-                goals?.health_bodyFatPercentage?.target
-                  ? goals.health_bodyFatPercentage.target.toFixed(1)
-                  : undefined
-              }
-              unit={goals?.health_bodyFatPercentage?.unit}
-              frequency="Target value"
-              onPress={() =>
-                handleNavigate("bodyFat", undefined, {
-                  target: goals?.health_bodyFatPercentage?.target ?? 0,
-                  unit: goals?.health_bodyFatPercentage?.unit ?? "%",
-                })
-              }
-              isLoading={isGoalsLoading}
-              isSetGoal={goals?.health_bodyFatPercentage ? false : true}
-            />
-          </View>
+        <View style={styles.sectionGroup}>
+          <Text style={styles.sectionTitle}>Health</Text>
+          <Card
+            label="Weight"
+            value={
+              goals?.health_weight?.target
+                ? goals.health_weight.target.toFixed(1)
+                : undefined
+            }
+            frequency="Target value"
+            unit={goals?.health_weight?.unit}
+            onPress={() =>
+              handleNavigate("weight", undefined, {
+                target: goals?.health_weight?.target ?? 0,
+                unit: goals?.health_weight?.unit ?? "calories",
+              })
+            }
+            isLoading={isGoalsLoading}
+            isSetGoal={goals?.health_weight ? false : true}
+          />
+          <Card
+            label="Body fat percentage"
+            value={
+              goals?.health_bodyFatPercentage?.target
+                ? goals.health_bodyFatPercentage.target.toFixed(1)
+                : undefined
+            }
+            unit={goals?.health_bodyFatPercentage?.unit}
+            frequency="Target value"
+            onPress={() =>
+              handleNavigate("bodyFat", undefined, {
+                target: goals?.health_bodyFatPercentage?.target ?? 0,
+                unit: goals?.health_bodyFatPercentage?.unit ?? "%",
+              })
+            }
+            isLoading={isGoalsLoading}
+            isSetGoal={goals?.health_bodyFatPercentage ? false : true}
+          />
+        </View>
 
-          <View style={styles.sectionGroup}>
-            <Text style={styles.sectionTitle}>Nutrition</Text>
-            <Card
-              label="Food"
-              value={goals?.nutrition_food?.value}
-              frequency={goals?.nutrition_food?.frequency}
-              unit={goals?.nutrition_food?.unit}
-              onPress={() =>
-                handleNavigate("food", {
-                  value: goals?.nutrition_food?.value ?? 0,
-                  unit: goals?.nutrition_food?.unit ?? "calories",
-                  frequency: goals?.nutrition_food?.frequency ?? "Daily",
-                })
-              }
-              isLoading={isGoalsLoading}
-              isSetGoal={goals?.nutrition_food ? false : true}
-            />
-            <Card
-              label="Energy burned"
-              value={goals?.nutrition_energyBurned?.value}
-              frequency={goals?.nutrition_energyBurned?.frequency}
-              unit={goals?.nutrition_energyBurned?.unit}
-              onPress={() =>
-                handleNavigate("energyBurned", {
-                  value: goals?.nutrition_energyBurned?.value ?? 0,
-                  unit: goals?.nutrition_energyBurned?.unit ?? "calories",
-                  frequency:
-                    goals?.nutrition_energyBurned?.frequency ?? "Daily",
-                })
-              }
-              isLoading={isGoalsLoading}
-              isSetGoal={goals?.nutrition_energyBurned ? false : true}
-            />
-            <Card
-              label="Water"
-              value={
-                goals?.nutrition_water?.value
-                  ? goals.nutrition_water.value.toFixed(2)
-                  : undefined
-              }
-              frequency={goals?.nutrition_water?.frequency}
-              unit={goals?.nutrition_water?.unit}
-              onPress={() =>
-                handleNavigate("water", {
-                  value: goals?.nutrition_water?.value ?? 0,
-                  unit: goals?.nutrition_water?.unit ?? "liters",
-                  frequency: goals?.nutrition_water?.frequency ?? "Daily",
-                })
-              }
-              isLoading={isGoalsLoading}
-              isSetGoal={goals?.nutrition_water ? false : true}
-            />
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </>
+        <View style={styles.sectionGroup}>
+          <Text style={styles.sectionTitle}>Nutrition</Text>
+          <Card
+            label="Food"
+            value={goals?.nutrition_food?.value}
+            frequency={goals?.nutrition_food?.frequency}
+            unit={goals?.nutrition_food?.unit}
+            onPress={() =>
+              handleNavigate("food", {
+                value: goals?.nutrition_food?.value ?? 0,
+                unit: goals?.nutrition_food?.unit ?? "calories",
+                frequency: goals?.nutrition_food?.frequency ?? "Daily",
+              })
+            }
+            isLoading={isGoalsLoading}
+            isSetGoal={goals?.nutrition_food ? false : true}
+          />
+          <Card
+            label="Energy burned"
+            value={goals?.nutrition_energyBurned?.value}
+            frequency={goals?.nutrition_energyBurned?.frequency}
+            unit={goals?.nutrition_energyBurned?.unit}
+            onPress={() =>
+              handleNavigate("energyBurned", {
+                value: goals?.nutrition_energyBurned?.value ?? 0,
+                unit: goals?.nutrition_energyBurned?.unit ?? "calories",
+                frequency: goals?.nutrition_energyBurned?.frequency ?? "Daily",
+              })
+            }
+            isLoading={isGoalsLoading}
+            isSetGoal={goals?.nutrition_energyBurned ? false : true}
+          />
+          <Card
+            label="Water"
+            value={
+              goals?.nutrition_water?.value
+                ? goals.nutrition_water.value.toFixed(2)
+                : undefined
+            }
+            frequency={goals?.nutrition_water?.frequency}
+            unit={goals?.nutrition_water?.unit}
+            onPress={() =>
+              handleNavigate("water", {
+                value: goals?.nutrition_water?.value ?? 0,
+                unit: goals?.nutrition_water?.unit ?? "liters",
+                frequency: goals?.nutrition_water?.frequency ?? "Daily",
+              })
+            }
+            isLoading={isGoalsLoading}
+            isSetGoal={goals?.nutrition_water ? false : true}
+          />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -359,7 +356,8 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff", paddingHorizontal: 16 },
   loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
   sectionGroup: {
-    paddingVertical: 16,
+    paddingTop: Platform.OS === "android" ? 15 : 0,
+    paddingBottom: 15,
   },
   sectionTitle: {
     ...fonts.titleMedium,

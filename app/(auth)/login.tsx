@@ -13,6 +13,7 @@ import {
   Image,
   ImageBackground,
   Pressable,
+  StatusBar,
   StyleSheet,
   Text,
   View,
@@ -54,6 +55,11 @@ export default function Login() {
       resizeMode="cover"
       style={{ flex: 1 }}
     >
+      <StatusBar
+        translucent
+        backgroundColor="transparent"
+        barStyle="dark-content"
+      />
       <View style={styles.container}>
         <View style={styles.logoContainer}>
           <Image
@@ -126,7 +132,11 @@ export default function Login() {
             </Text>
             <CustomButton
               title="Login"
-              onPress={handleLogin}
+              onPress={() => {
+                if (!isLoading) {
+                  handleLogin();
+                }
+              }}
               width="90%"
               leadingIcon={isLoading && <ActivityIndicator color="white" />}
             />

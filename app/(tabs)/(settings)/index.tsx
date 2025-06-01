@@ -11,6 +11,7 @@ import {
   Pressable,
   SafeAreaView,
   ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
   View,
@@ -26,11 +27,15 @@ export default function Index() {
   const dispatch = useDispatch();
   return (
     <SafeAreaView style={{ flex: 1 }}>
+      <StatusBar
+        barStyle="dark-content"
+        translucent
+        backgroundColor="transparent"
+      />
       <ScreenTitle
         title="Profile and Settings"
         style={{ marginTop: Platform.OS === "android" ? 40 : 0 }}
       />
-
       <ScrollView>
         <View style={styles.container}>
           <View style={styles.avatarContainer}>
@@ -234,6 +239,7 @@ const styles = StyleSheet.create({
     gap: 20,
     paddingHorizontal: 20,
     paddingBottom: 20,
+    marginTop: 10,
   },
   avatarContainer: {
     alignItems: "center",

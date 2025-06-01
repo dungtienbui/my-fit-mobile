@@ -12,6 +12,7 @@ import {
   Platform,
   SafeAreaView,
   ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -94,174 +95,183 @@ export default function Index() {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView>
-        <View style={styles.container}>
-          <View style={styles.headerContainer}>
-            <View style={styles.headerTextContainer}>
-              <Text style={styles.welcomeText}>Welcome back</Text>
-              <Text
-                style={
-                  data
-                    ? styles.userNameText
-                    : { ...fonts.bodySmall, color: colors.tertiary3 }
-                }
-              >
-                {data ? data.name : "Loading..."}
-              </Text>
-            </View>
-            <Ionicons name="notifications-outline" size={25} color="#000" />
-          </View>
-          <View style={styles.bodyFatContainer}>
-            {/* Các chấm tròn */}
-            <View style={[styles.dot, { top: 20, right: 120 }]} />
-            <View style={[styles.dot, { top: 10, left: 140 }]} />
-            <View style={[styles.dot, { bottom: 20, right: 150 }]} />
-            <View style={[styles.dot, { bottom: 20, left: 150 }]} />
-            <View
-              style={[
-                styles.dot,
-                { bottom: -25, left: -25 },
-                { width: 60, height: 60 },
-              ]}
-            />
-            <View
-              style={[
-                styles.dot,
-                { bottom: -20, right: -30 },
-                { width: 70, height: 70 },
-              ]}
-            />
-            <View style={{ gap: 15, flexShrink: 1 }}>
-              <View>
+      <StatusBar
+        translucent
+        backgroundColor="transparent"
+        barStyle="dark-content"
+      />
+      <View style={{ paddingTop: Platform.OS === "android" ? 50 : 0 }}>
+        <ScrollView>
+          <View style={styles.container}>
+            <View style={styles.headerContainer}>
+              <View style={styles.headerTextContainer}>
+                <Text style={styles.welcomeText}>Welcome back</Text>
                 <Text
-                  style={{
-                    ...fonts.titleSmall,
-                    color: "#fff",
-                    marginBottom: 5,
-                  }}
+                  style={
+                    data
+                      ? styles.userNameText
+                      : { ...fonts.bodySmall, color: colors.tertiary3 }
+                  }
                 >
-                  BMI (Body Mass Index)
-                </Text>
-                <Text style={{ ...fonts.bodySmall, color: "#fff" }}>
-                  {BMI === 0 ? "N/A" : `You have a ${classifyBMI(BMI)}`}
+                  {data ? data.name : "Loading..."}
                 </Text>
               </View>
+              <Ionicons name="notifications-outline" size={25} color="#000" />
+            </View>
+            <View style={styles.bodyFatContainer}>
+              {/* Các chấm tròn */}
+              <View style={[styles.dot, { top: 20, right: 120 }]} />
+              <View style={[styles.dot, { top: 10, left: 140 }]} />
+              <View style={[styles.dot, { bottom: 20, right: 150 }]} />
+              <View style={[styles.dot, { bottom: 20, left: 150 }]} />
+              <View
+                style={[
+                  styles.dot,
+                  { bottom: -25, left: -25 },
+                  { width: 60, height: 60 },
+                ]}
+              />
+              <View
+                style={[
+                  styles.dot,
+                  { bottom: -20, right: -30 },
+                  { width: 70, height: 70 },
+                ]}
+              />
+              <View style={{ gap: 15, flexShrink: 1 }}>
+                <View>
+                  <Text
+                    style={{
+                      ...fonts.titleSmall,
+                      color: "#fff",
+                      marginBottom: 5,
+                    }}
+                  >
+                    BMI (Body Mass Index)
+                  </Text>
+                  <Text style={{ ...fonts.bodySmall, color: "#fff" }}>
+                    {BMI === 0 ? "N/A" : `You have a ${classifyBMI(BMI)}`}
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  style={{
+                    paddingVertical: 8,
+                    paddingHorizontal: 12,
+                    backgroundColor: colors.primary2,
+                    alignSelf: "center",
+                    borderRadius: 5,
+                  }}
+                >
+                  <Text style={{ ...fonts.bodySmall, color: "#fff" }}>
+                    View more
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <PieChart
+                widthAndHeight={100}
+                series={[
+                  {
+                    value: BMI * 10,
+                    color: colors.primary2,
+                    label: {
+                      text: BMI.toFixed(2) + "%",
+                      stroke: "#fff",
+                      fontSize: 10,
+                      fontWeight: 200,
+                      offsetX: 5,
+                      offsetY: -5,
+                    },
+                  },
+                  {
+                    value: 1000 - BMI * 10,
+                    color: "#fff",
+                    label:
+                      BMI === 0
+                        ? { text: "N/A", offsetX: 0, offsetY: -20 }
+                        : undefined,
+                  },
+                ]}
+              />
+            </View>
+            <View style={styles.todayTargetContainer}>
+              <View style={styles.todayTargetContainerBg}></View>
+              <Text style={{ ...fonts.bodyMedium }}>Today target</Text>
               <TouchableOpacity
                 style={{
                   paddingVertical: 8,
                   paddingHorizontal: 12,
-                  backgroundColor: colors.primary2,
-                  alignSelf: "center",
-                  borderRadius: 5,
+                  backgroundColor: colors.primary1,
+                  borderRadius: 15,
+                }}
+                onPress={() => {
+                  router.push("/(tabs)/(home)/todayTarget");
                 }}
               >
-                <Text style={{ ...fonts.bodySmall, color: "#fff" }}>
-                  View more
+                <Text style={{ ...fonts.labelSmall, color: "#fff" }}>
+                  Check
                 </Text>
               </TouchableOpacity>
             </View>
-            <PieChart
-              widthAndHeight={100}
-              series={[
-                {
-                  value: BMI * 10,
-                  color: colors.primary2,
-                  label: {
-                    text: BMI.toFixed(2) + "%",
-                    stroke: "#fff",
-                    fontSize: 10,
-                    fontWeight: 200,
-                    offsetX: 5,
-                    offsetY: -5,
-                  },
-                },
-                {
-                  value: 1000 - BMI * 10,
-                  color: "#fff",
-                  label:
-                    BMI === 0
-                      ? { text: "N/A", offsetX: 0, offsetY: -20 }
-                      : undefined,
-                },
-              ]}
-            />
-          </View>
-          <View style={styles.todayTargetContainer}>
-            <View style={styles.todayTargetContainerBg}></View>
-            <Text style={{ ...fonts.bodyMedium }}>Today target</Text>
-            <TouchableOpacity
-              style={{
-                paddingVertical: 8,
-                paddingHorizontal: 12,
-                backgroundColor: colors.primary1,
-                borderRadius: 15,
-              }}
-              onPress={() => {
-                router.push("/(tabs)/(home)/todayTarget");
-              }}
-            >
-              <Text style={{ ...fonts.labelSmall, color: "#fff" }}>Check</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.todayStatus}>
-            <Text style={{ ...fonts.titleMedium, marginBottom: 15 }}>
-              Today status
-            </Text>
-            <View style={{ gap: 15 }}>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-evenly",
-                  alignItems: "center",
-                }}
-              >
-                <StatusCell
-                  type="Sleep"
-                  values={[
-                    {
-                      unit: "h",
-                      value: Math.floor(todayData.sleep / 60).toFixed(0),
-                    },
-                    { unit: "m", value: (todayData.sleep % 60).toFixed(0) },
-                  ]}
-                  image={require("../../../assets/images/Sleep-Graph.png")}
-                  joiner=" "
-                />
-                <StatusCell
-                  type="Calories & Water"
-                  values={[
-                    { unit: "kCal", value: todayData.calories.toFixed(2) },
-                    { unit: "L", value: todayData.water.toFixed(2) },
-                  ]}
-                  image={require("../../../assets/images/basicfood.png")}
-                />
-              </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-evenly",
-                  alignItems: "center",
-                }}
-              >
-                <StatusCell
-                  type="Walking"
-                  values={[
-                    { unit: "step", value: todayData.walking.toString() },
-                  ]}
-                  image={require("../../../assets/images/statusCellWalking.png")}
-                />
-                <StatusCell
-                  type="Activities"
-                  values={[
-                    { unit: "h", value: todayData.activityTime.toFixed(2) },
-                  ]}
-                  image={require("../../../assets/images/statusActivities.png")}
-                />
+            <View style={styles.todayStatus}>
+              <Text style={{ ...fonts.titleMedium, marginBottom: 15 }}>
+                Today status
+              </Text>
+              <View style={{ gap: 15 }}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-evenly",
+                    alignItems: "center",
+                  }}
+                >
+                  <StatusCell
+                    type="Sleep"
+                    values={[
+                      {
+                        unit: "h",
+                        value: Math.floor(todayData.sleep / 60).toFixed(0),
+                      },
+                      { unit: "m", value: (todayData.sleep % 60).toFixed(0) },
+                    ]}
+                    image={require("../../../assets/images/Sleep-Graph.png")}
+                    joiner=" "
+                  />
+                  <StatusCell
+                    type="Calories & Water"
+                    values={[
+                      { unit: "kCal", value: todayData.calories.toFixed(2) },
+                      { unit: "L", value: todayData.water.toFixed(2) },
+                    ]}
+                    image={require("../../../assets/images/basicfood.png")}
+                  />
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-evenly",
+                    alignItems: "center",
+                  }}
+                >
+                  <StatusCell
+                    type="Walking"
+                    values={[
+                      { unit: "step", value: todayData.walking.toString() },
+                    ]}
+                    image={require("../../../assets/images/statusCellWalking.png")}
+                  />
+                  <StatusCell
+                    type="Activities"
+                    values={[
+                      { unit: "h", value: todayData.activityTime.toFixed(2) },
+                    ]}
+                    image={require("../../../assets/images/statusActivities.png")}
+                  />
+                </View>
               </View>
             </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
@@ -287,7 +297,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 20,
     paddingHorizontal: 20,
-    marginTop: Platform.OS === "android" ? 60 : 0,
     marginBottom: Platform.OS === "android" ? 60 : 20,
   },
   headerContainer: {

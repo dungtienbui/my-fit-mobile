@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 10,
     position: "relative",
+    zIndex: 999,
   },
   title: {
     position: "absolute",

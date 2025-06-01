@@ -16,6 +16,7 @@ import {
   Keyboard,
   Platform,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -26,6 +27,7 @@ import Toast from "react-native-toast-message";
 import Icon from "react-native-vector-icons/Feather"; // Dùng 'Feather' hoặc 'FontAwesome', v.v.
 
 const AddExercise = () => {
+  const [isFocusInputText, setFocusInputText] = useState(false);
   const [exerciseDate, setExerciseDate] = useState(new Date());
   const [exerciseTime, setExerciseTime] = useState(new Date());
   const [exerciseName, setExerciseName] = useState<
@@ -91,14 +93,17 @@ const AddExercise = () => {
     return combined;
   };
 
-  const isInteger = (value: string) => {
+  const isValidInputValue = (value: string) => {
+    if (value === "") {
+      return true;
+    }
     return /^\d+$/.test(value);
   };
 
   const handleSave = async () => {
     const exerciseDateTime = combineDateAndTime(exerciseDate, exerciseTime);
 
-    if (!isInteger(distance)) {
+    if (!isValidInputValue(distance) || distance === "") {
       Toast.show({
         text1: "Ohh! Distance is invalid.",
         text2: "Please enter valid distance!",
@@ -189,7 +194,7 @@ const AddExercise = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScreenTitle
-        title="Add Calories"
+        title="Add exercise"
         LeadingIconButton={
           <IconButton
             icon={<Ionicons name="arrow-back" size={15} color="#fff" />}
@@ -199,7 +204,7 @@ const AddExercise = () => {
           />
         }
         TrailingIconButton={
-          showPicker ? (
+          (showPicker && Platform.OS === "ios") || isFocusInputText ? (
             <Text
               style={{
                 ...fonts.titleMedium,
@@ -208,6 +213,7 @@ const AddExercise = () => {
               }}
               onPress={() => {
                 setShowPicker(false);
+                setFocusInputText(false);
                 Keyboard.dismiss();
               }}
             >
@@ -217,10 +223,8 @@ const AddExercise = () => {
         }
         style={{ marginTop: Platform.OS === "android" ? 40 : 0 }}
       />
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "space-between",
+      <ScrollView
+        contentContainerStyle={{
           alignItems: "center",
         }}
       >
@@ -263,7 +267,7 @@ const AddExercise = () => {
             <CustomInput
               value={distance}
               onChangeText={(text) => {
-                if (!isInteger(text)) {
+                if (!isValidInputValue(text)) {
                   Toast.show({
                     text1: "Ohh!",
                     text2: "Distance is invalid. Please enter number!",
@@ -276,7 +280,11 @@ const AddExercise = () => {
               label="Distance"
               width="49%"
               trailingIcon={<Text>m</Text>}
-              keyboardType="numeric"
+              keyboardType="number-pad"
+              inputMode="numeric"
+              onFocus={() => {
+                setFocusInputText(true);
+              }}
             />
           </View>
           <View style={{ gap: 4 }}>
@@ -284,7 +292,10 @@ const AddExercise = () => {
               Duration
             </Text>
             <View
-              style={{ flexDirection: "row", justifyContent: "space-between" }}
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
             >
               <View
                 style={{
@@ -404,6 +415,9 @@ const AddExercise = () => {
             placeholder="Your note..."
             label="Note (optional)"
             width="100%"
+            onFocus={() => {
+              setFocusInputText(true);
+            }}
           />
         </View>
 
@@ -413,14 +427,14 @@ const AddExercise = () => {
           onPress={() => {
             handleSave();
           }}
-          style={{ marginBottom: 20, position: "absolute", bottom: 0 }}
+          style={{ marginTop: 50, marginBottom: 10 }}
           leadingIcon={
             exerciseIsLoading || stepsIsLoading ? (
               <ActivityIndicator color="#fff" />
             ) : undefined
           }
         />
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

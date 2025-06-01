@@ -146,7 +146,7 @@ const SleepTimeForm = () => {
           />
         }
         TrailingIconButton={
-          showPicker ? (
+          showPicker && Platform.OS === "ios" ? (
             <Text
               style={{
                 ...fonts.titleMedium,
@@ -167,7 +167,6 @@ const SleepTimeForm = () => {
       <View
         style={{
           flex: 1,
-          justifyContent: "space-between",
           alignItems: "center",
         }}
       >
@@ -258,7 +257,7 @@ const SleepTimeForm = () => {
           onPress={() => {
             handleSave();
           }}
-          style={{ marginBottom: 20 }}
+          style={{ marginTop: 50 }}
           leadingIcon={
             saveIsLoading ? <ActivityIndicator color="#fff" /> : undefined
           }
@@ -272,7 +271,7 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     paddingHorizontal: 20,
-    marginTop: 20,
+    marginTop: 15,
     gap: 10,
   },
   title: {

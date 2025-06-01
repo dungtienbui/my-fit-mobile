@@ -41,4 +41,17 @@ export const shadow = StyleSheet.create({
       },
     }),
   },
+  shap: {
+    ...Platform.select({
+      ios: {
+        shadowOffset: { width: 2, height: 2 },
+        shadowColor: "#000",
+        shadowOpacity: 0.3,
+        shadowRadius: 2.5,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
+  },
 });

@@ -25,6 +25,7 @@ import Toast from "react-native-toast-message";
 import Icon from "react-native-vector-icons/Feather"; // Dùng 'Feather' hoặc 'FontAwesome', v.v.
 
 const AddHydration = () => {
+  const [isFocusInputText, setFocusInputText] = useState(false);
   const [waterDate, setWaterDate] = useState(new Date());
   const [waterTime, setWaterTime] = useState(new Date());
   const [waterIntake, setWaterIntake] = useState("0");
@@ -80,14 +81,17 @@ const AddHydration = () => {
     return combined;
   };
 
-  const isInteger = (value: string) => {
+  const isValidInputValue = (value: string) => {
+    if (value === "") {
+      return true;
+    }
     return /^\d+$/.test(value);
   };
 
   const handleSave = async () => {
     const waterDateTime = combineDateAndTime(waterDate, waterTime);
 
-    if (!isInteger(waterIntake)) {
+    if (!isValidInputValue(waterIntake) || waterIntake === "") {
       Toast.show({
         text1: "Ohh! Water intake is invalid.",
         text2: "Please enter valid calories!",
@@ -131,7 +135,7 @@ const AddHydration = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScreenTitle
-        title="Add Calories"
+        title="Add hydration"
         LeadingIconButton={
           <IconButton
             icon={<Ionicons name="arrow-back" size={15} color="#fff" />}
@@ -141,7 +145,7 @@ const AddHydration = () => {
           />
         }
         TrailingIconButton={
-          showPicker ? (
+          (showPicker && Platform.OS === "ios") || isFocusInputText ? (
             <Text
               style={{
                 ...fonts.titleMedium,
@@ -150,6 +154,7 @@ const AddHydration = () => {
               }}
               onPress={() => {
                 setShowPicker(false);
+                setFocusInputText(false);
                 Keyboard.dismiss();
               }}
             >
@@ -162,7 +167,6 @@ const AddHydration = () => {
       <View
         style={{
           flex: 1,
-          justifyContent: "space-between",
           alignItems: "center",
         }}
       >
@@ -170,7 +174,7 @@ const AddHydration = () => {
           <CustomInput
             value={waterIntake}
             onChangeText={(text) => {
-              if (!isInteger(text)) {
+              if (!isValidInputValue(text)) {
                 Toast.show({
                   text1: "Ohh!",
                   text2: "Water intake is invalid. Please enter number!",
@@ -183,7 +187,11 @@ const AddHydration = () => {
             label="Water intake"
             width="100%"
             trailingIcon={<Text>ml</Text>}
-            keyboardType="numeric"
+            keyboardType="decimal-pad"
+            inputMode="decimal"
+            onFocus={() => {
+              setFocusInputText(true);
+            }}
           />
           <CustomInput
             label="Drink date"
@@ -234,7 +242,7 @@ const AddHydration = () => {
           onPress={() => {
             handleSave();
           }}
-          style={{ marginBottom: 20 }}
+          style={{ marginTop: 50 }}
           leadingIcon={
             saveIsLoading ? <ActivityIndicator color="#fff" /> : undefined
           }

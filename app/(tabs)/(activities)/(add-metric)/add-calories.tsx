@@ -20,7 +20,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import Toast from "react-native-toast-message";
@@ -34,6 +34,8 @@ const AddCalories = () => {
     { label: "Snack", value: "snack" },
     { label: "Other", value: "other" },
   ];
+
+  const [isFocusInputText, setFocusInputText] = useState(false);
 
   const [mealDate, setMealDate] = useState(new Date());
   const [mealTime, setMealTime] = useState(new Date());
@@ -92,14 +94,17 @@ const AddCalories = () => {
     return combined;
   };
 
-  const isInteger = (value: string) => {
+  const isValidInputValue = (value: string) => {
+    if (value === "") {
+      return true;
+    }
     return /^\d+$/.test(value);
   };
 
   const handleSave = async () => {
     const mealDateTime = combineDateAndTime(mealDate, mealTime);
 
-    if (!isInteger(mealCalories)) {
+    if (!isValidInputValue(mealCalories) || mealCalories === "") {
       Toast.show({
         text1: "Ohh! Calories is invalid.",
         text2: "Please enter valid calories!",
@@ -156,7 +161,7 @@ const AddCalories = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScreenTitle
-        title="Add Calories"
+        title="Add calories"
         LeadingIconButton={
           <IconButton
             icon={<Ionicons name="arrow-back" size={15} color="#fff" />}
@@ -166,7 +171,7 @@ const AddCalories = () => {
           />
         }
         TrailingIconButton={
-          showPicker ? (
+          (showPicker && Platform.OS === "ios") || isFocusInputText ? (
             <Text
               style={{
                 ...fonts.titleMedium,
@@ -175,6 +180,7 @@ const AddCalories = () => {
               }}
               onPress={() => {
                 setShowPicker(false);
+                setFocusInputText(false);
                 Keyboard.dismiss();
               }}
             >
@@ -186,9 +192,8 @@ const AddCalories = () => {
       />
       <View
         style={{
-          flex: 1,
-          justifyContent: "space-between",
           alignItems: "center",
+          flex: 1,
         }}
       >
         <View style={styles.container}>
@@ -200,6 +205,9 @@ const AddCalories = () => {
             placeholder="Meal name..."
             label="Meal name"
             width="100%"
+            onFocus={() => {
+              setFocusInputText(true);
+            }}
           />
           <View
             style={{ flexDirection: "row", justifyContent: "space-between" }}
@@ -240,7 +248,7 @@ const AddCalories = () => {
             <CustomInput
               value={mealCalories}
               onChangeText={(text) => {
-                if (!isInteger(text)) {
+                if (!isValidInputValue(text)) {
                   Toast.show({
                     text1: "Ohh!",
                     text2: "Calories is invalid. Please enter number!",
@@ -249,11 +257,15 @@ const AddCalories = () => {
                 }
                 setMealCalories(text);
               }}
-              placeholder="Meal's calories..."
+              placeholder="Calories..."
               label="Calories intake"
               width="49%"
-              trailingIcon={<Text>Calo</Text>}
-              keyboardType="numeric"
+              trailingIcon={<Text>Cal</Text>}
+              keyboardType="number-pad"
+              inputMode="numeric"
+              onFocus={() => {
+                setFocusInputText(true);
+              }}
             />
           </View>
           <CustomInput
@@ -305,7 +317,7 @@ const AddCalories = () => {
           onPress={() => {
             handleSave();
           }}
-          style={{ marginBottom: 20 }}
+          style={{ marginTop: 50 }}
           leadingIcon={
             saveIsLoading ? <ActivityIndicator color="#fff" /> : undefined
           }

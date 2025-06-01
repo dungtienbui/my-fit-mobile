@@ -85,6 +85,31 @@ export const healthMetricsApi = baseApi.injectEndpoints({
       }),
       providesTags: ["HealthMetrics"],
     }),
+    getHealthMetricsByDateRangeAndType: builder.query<
+      HealthMetricResponseDto[],
+      {
+        start: Date;
+        end: Date;
+        metricType:
+          | "steps"
+          | "calories"
+          | "water"
+          | "exercise"
+          | "weight"
+          | "height"
+          | "sleep";
+      }
+    >({
+      query: ({ start, end, metricType }) => ({
+        url: `${baseUrl}/user/metric-type/date-range`,
+        params: {
+          start: start.toISOString(),
+          end: end.toISOString(),
+          metricType: metricType,
+        },
+      }),
+      providesTags: ["HealthMetrics"],
+    }),
   }),
   overrideExisting: false, // Nếu đã có endpoint nào trùng thì không ghi đè
 });
@@ -96,4 +121,5 @@ export const {
   useGetHealthMetricsQuery,
   useGetHealthMetricsByDateQuery,
   useGetHealthMetricsByDateAndTypeQuery,
+  useGetHealthMetricsByDateRangeAndTypeQuery,
 } = healthMetricsApi;

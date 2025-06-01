@@ -2,7 +2,7 @@
 import { fonts } from "@/theme/fonts";
 import { shadow } from "@/theme/shadow";
 import React from "react";
-import { View, Text, StyleSheet, DimensionValue } from "react-native";
+import { DimensionValue, StyleSheet, Text, View } from "react-native";
 
 type RecordCardProps = {
   value: string;
@@ -18,7 +18,7 @@ const RecordCard = ({
   width = "80%",
 }: RecordCardProps) => {
   return (
-    <View style={[styles.card, { width: width }, shadow.medium]}>
+    <View style={[styles.card, { width: width }, shadow.shap]}>
       <View style={styles.leadingTextContainer}>
         <Text style={styles.type}>{recordType}</Text>
         <Text style={styles.datetime}>{datetime}</Text>
@@ -37,13 +37,14 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 10,
     borderRadius: 10,
-    margin: 5,
+    marginHorizontal: 5,
+    marginVertical: 8,
   },
   leadingTextContainer: {
     gap: 5,
   },
   value: {
-    ...fonts.titleLarge,
+    ...fonts.titleMedium,
   },
   type: {
     ...fonts.titleMedium,

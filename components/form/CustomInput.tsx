@@ -6,9 +6,11 @@ import {
   DimensionValue,
   InputModeOptions,
   KeyboardType,
+  NativeSyntheticEvent,
   StyleSheet,
   Text,
   TextInput,
+  TextInputFocusEventData,
   TextStyle,
   View,
   ViewStyle,
@@ -36,6 +38,9 @@ interface CustomInputProps {
   inputStatus?: "default" | "error" | "success";
   keyboardType?: KeyboardType;
   inputMode?: InputModeOptions;
+  onFocus?:
+    | ((e: NativeSyntheticEvent<TextInputFocusEventData>) => void)
+    | undefined;
 }
 
 const CustomInput: React.FC<CustomInputProps> = ({
@@ -56,14 +61,20 @@ const CustomInput: React.FC<CustomInputProps> = ({
   width = "80%",
   height = "auto",
   inputBorder = 4,
-  isEmailInput,
+  isEmailInput = false,
   inputStatus = "default",
   keyboardType = "default",
-  inputMode = "none",
+  inputMode = "text",
+  onFocus = undefined,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
 
-  const handleFocus = () => setIsFocused(true);
+  const handleFocus = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
+    setIsFocused(true);
+    if (onFocus !== undefined) {
+      onFocus(e);
+    }
+  };
   const handleBlur = () => setIsFocused(false);
   const inputStyles = [styles.input, inputStyle];
 
@@ -104,7 +115,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
           editable={!disabled}
           autoCapitalize="none"
           autoCorrect={false}
-          keyboardType={isEmailInput ? "email-address" : keyboardType}
+          keyboardType={keyboardType}
           readOnly={readonly}
           inputMode={inputMode}
         />

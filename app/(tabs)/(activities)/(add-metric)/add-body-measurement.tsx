@@ -31,6 +31,8 @@ const AddBodyMeasurement = () => {
     { label: "Weight", value: "weight" },
   ];
 
+  const [isFocusInputText, setFocusInputText] = useState(false);
+
   const [measureDate, setMeasureDate] = useState(new Date());
   const [measureTime, setMeasureTime] = useState(new Date());
   const [measureValue, setMeasureValue] = useState("0");
@@ -87,14 +89,32 @@ const AddBodyMeasurement = () => {
     return combined;
   };
 
-  const isInteger = (value: string) => {
-    return /^\d+$/.test(value);
+  const isValidInputValue = (value: string) => {
+    if (value === "") {
+      return true;
+    }
+
+    if (measureType === "height") {
+      return /^\d+$/.test(value);
+    } else if (measureType === "weight") {
+      return /^\d+(\.\d*)?$/.test(value) || /^\d+(\,\d*)?$/.test(value);
+    }
+
+    return false;
   };
+
+  function normalizeDecimal(value: string) {
+    // Nếu có dấu phẩy, chuyển hết dấu ',' thành '.'
+    if (value.includes(",")) {
+      return value.replace(",", ".");
+    }
+    return value;
+  }
 
   const handleSave = async () => {
     const measureDateTime = combineDateAndTime(measureDate, measureTime);
 
-    if (!isInteger(measureValue)) {
+    if (!isValidInputValue(measureValue) || measureValue === "") {
       Toast.show({
         text1: "Ohh! Measurement is invalid.",
         text2: "Please enter valid measurement!",
@@ -103,11 +123,20 @@ const AddBodyMeasurement = () => {
       return;
     }
 
-    const measureCaloriesNumber = parseInt(measureValue, 10);
+    const normalizeMeasureValue = normalizeDecimal(measureValue);
+
+    const measureValueNumber =
+      measureType === "height"
+        ? parseInt(normalizeMeasureValue, 10)
+        : measureType === "weight"
+        ? parseFloat(normalizeMeasureValue)
+        : 0;
+
+    console.log("measureValueNumber: ", measureValueNumber);
 
     await saveData({
       metricType: measureType,
-      value: measureCaloriesNumber,
+      value: measureValueNumber,
       date: measureDateTime,
     });
   };
@@ -148,7 +177,7 @@ const AddBodyMeasurement = () => {
           />
         }
         TrailingIconButton={
-          showPicker ? (
+          (showPicker && Platform.OS === "ios") || isFocusInputText ? (
             <Text
               style={{
                 ...fonts.titleMedium,
@@ -157,6 +186,7 @@ const AddBodyMeasurement = () => {
               }}
               onPress={() => {
                 setShowPicker(false);
+                setFocusInputText(false);
                 Keyboard.dismiss();
               }}
             >
@@ -169,7 +199,6 @@ const AddBodyMeasurement = () => {
       <View
         style={{
           flex: 1,
-          justifyContent: "space-between",
           alignItems: "center",
         }}
       >
@@ -213,7 +242,7 @@ const AddBodyMeasurement = () => {
             <CustomInput
               value={measureValue}
               onChangeText={(text) => {
-                if (!isInteger(text)) {
+                if (!isValidInputValue(text)) {
                   Toast.show({
                     text1: "Ohh!",
                     text2: "Measure value is invalid. Please enter number!",
@@ -222,13 +251,41 @@ const AddBodyMeasurement = () => {
                 }
                 setMeasureValue(text);
               }}
-              placeholder="Meal's calories..."
-              label="Calories intake"
+              placeholder={
+                measureType === "height"
+                  ? "height..."
+                  : measureType === "weight"
+                  ? "weight..."
+                  : "value..."
+              }
+              label={
+                measureType === "height"
+                  ? "Your height"
+                  : measureType === "weight"
+                  ? "Your weight"
+                  : "Value"
+              }
               width="49%"
               trailingIcon={
                 <Text>{measureType === "height" ? "cm" : "kg"}</Text>
               }
-              keyboardType="numeric"
+              keyboardType={
+                measureType === "height"
+                  ? "number-pad"
+                  : measureType === "weight"
+                  ? "decimal-pad"
+                  : "default"
+              }
+              inputMode={
+                measureType === "height"
+                  ? "numeric"
+                  : measureType === "weight"
+                  ? "decimal"
+                  : "text"
+              }
+              onFocus={() => {
+                setFocusInputText(true);
+              }}
             />
           </View>
           <CustomInput
@@ -279,7 +336,7 @@ const AddBodyMeasurement = () => {
           onPress={() => {
             handleSave();
           }}
-          style={{ marginBottom: 20 }}
+          style={{ marginTop: 50 }}
           leadingIcon={
             saveIsLoading ? <ActivityIndicator color="#fff" /> : undefined
           }

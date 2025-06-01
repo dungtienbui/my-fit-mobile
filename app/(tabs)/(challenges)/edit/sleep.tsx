@@ -126,7 +126,7 @@ const Sleep = () => {
     <SafeAreaView style={{ flex: 1 }}>
       <ScreenTitle
         title="Sleep time"
-        style={{ marginTop: Platform.OS === "android" ? 40 : 0 }}
+        // style={{ marginTop: Platform.OS === "android" ? 40 : 0 }}
         LeadingIconButton={
           <IconButton
             icon={<Ionicons name="arrow-back" size={15} color="#fff" />}
@@ -136,7 +136,7 @@ const Sleep = () => {
           />
         }
         TrailingIconButton={
-          showPicker ? (
+          showPicker && Platform.OS === "ios" ? (
             <Text
               style={{
                 ...fonts.titleMedium,
@@ -170,7 +170,11 @@ const Sleep = () => {
                 value={formatTime(startTime)}
                 editable={false}
               />
-              <Ionicons name="time-outline" size={30} />
+              <Ionicons
+                name="time-outline"
+                size={30}
+                style={{ alignSelf: "center" }}
+              />
             </TouchableOpacity>
           </View>
 
@@ -185,7 +189,11 @@ const Sleep = () => {
                 value={formatTime(endTime)}
                 editable={false}
               />
-              <Ionicons name="time-outline" size={30} />
+              <Ionicons
+                name="time-outline"
+                size={30}
+                style={{ alignSelf: "center" }}
+              />
             </TouchableOpacity>
           </View>
         </View>
@@ -220,6 +228,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-between",
     alignItems: "center",
+    paddingBottom: Platform.OS === "android" ? 20 : 0,
   },
   contentContainer: {
     marginTop: 50,

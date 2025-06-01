@@ -1,34 +1,55 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Pressable } from 'react-native';
-import { MaterialCommunityIcons, FontAwesome5, Ionicons, Entypo } from '@expo/vector-icons';
-import { Menu, Divider, Provider } from 'react-native-paper';
-import { useRouter } from 'expo-router';
+import ScreenTitle from "@/components/screen/ScreenTitle";
+import { fonts } from "@/theme/fonts";
+import {
+  Entypo,
+  FontAwesome5,
+  Ionicons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
+import { Href, useRouter } from "expo-router";
+import React, { JSX, useState } from "react";
+import {
+  FlatList,
+  Platform,
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
-// Thêm key 'route' cho từng card!
-const activities = [
+type CollectionItemProps = {
+  icon: JSX.Element;
+  label: string;
+  bgColor: string;
+  route: Href;
+};
+
+const collectionData: CollectionItemProps[] = [
   {
-    icon: <MaterialCommunityIcons name="run" size={24} color="#2ecc71" />,
-    label: 'Exercise',
-    bgColor: '#eafaf1',
-    route: '/(tabs)/(activities)/activities-detail/exercise',
+    icon: <MaterialCommunityIcons name="run" size={45} color="#2ecc71" />,
+    label: "Exercise",
+    bgColor: "#eafaf1",
+    route: "/(tabs)/(activities)/activities-detail/exercise",
   },
   {
-    icon: <FontAwesome5 name="bed" size={24} color="#9b59b6" />,
-    label: 'Sleep',
-    bgColor: '#f5ecfc',
-    route: '/(tabs)/(activities)/activities-detail/sleep',
+    icon: <FontAwesome5 name="bed" size={30} color="#9b59b6" />,
+    label: "Sleep",
+    bgColor: "#f5ecfc",
+    route: "/(tabs)/(activities)/activities-detail/sleep",
   },
   {
-    icon: <Ionicons name="body" size={24} color="#3498db" />,
-    label: 'Body measurements',
-    bgColor: '#eaf3fc',
-    route: '/(tabs)/(activities)/activities-detail/body-measurement',
+    icon: <Ionicons name="body" size={40} color="#3498db" />,
+    label: "Body measurements",
+    bgColor: "#eaf3fc",
+    route: "/(tabs)/(activities)/activities-detail/body-measurement",
   },
   {
-    icon: <Entypo name="bowl" size={24} color="#e67e22" />,
-    label: 'Nutrition',
-    bgColor: '#fef2e7',
-    route: '/(tabs)/(activities)/activities-detail/nutrition',
+    icon: <Entypo name="bowl" size={40} color="#e67e22" />,
+    label: "Nutrition",
+    bgColor: "#fef2e7",
+    route: "/(tabs)/(activities)/activities-detail/nutrition",
   },
 ];
 
@@ -38,151 +59,87 @@ export default function CollectionScreen() {
   const closeMenu = () => setVisible(false);
   const router = useRouter();
 
-  const navigateTo = (path) => {
+  const navigateTo = (path: Href) => {
     closeMenu();
     router.push(path);
   };
 
-  return (
-    <Provider>
-      <View style={styles.container}>
-        <Text style={styles.header}>Collection</Text>
-        <ScrollView contentContainerStyle={styles.scrollContent}>
-          {activities.map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              style={[styles.card, { backgroundColor: item.bgColor }]}
-              onPress={() => router.push(item.route)}
-            >
-              <View style={styles.cardContent}>
-                <View style={styles.iconWrapper}>{item.icon}</View>
-                <Text style={styles.label}>{item.label}</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-        {/* Overlay làm mờ nền khi menu mở */}
-        {visible && (
-          <Pressable style={styles.overlay} onPress={closeMenu}>
-            {/* Cho phép ấn ngoài để tắt menu */}
-          </Pressable>
-        )}
-        <View pointerEvents="box-none" style={styles.fabWrapper}>
-          <Menu
-            visible={visible}
-            onDismiss={closeMenu}
-            anchor={
-              <TouchableOpacity style={styles.fabButton} onPress={openMenu} activeOpacity={0.7}>
-                <Ionicons name="add" size={32} color="#2ecc71" />
-              </TouchableOpacity>
-            }
-            contentStyle={{
-              borderRadius: 16,
-              minWidth: 260,
-              backgroundColor: '#fff',
-            }}
-          >
-            <Menu.Item
-              title="Live tracking"
-              disabled
-              titleStyle={{ color: "#bbb" }}
-            />
-            <Menu.Item
-              onPress={() => navigateTo('/(tabs)/(activities)/(add-metric)/add-exercise')}
-              title="Exercise"
-              titleStyle={{ color: "#222" }}
-            />
-            <Menu.Item
-              onPress={() => navigateTo('/(tabs)/(activities)/(add-metric)/add-sleep')}
-              title="Sleep"
-              titleStyle={{ color: "#222" }}
-            />
-            <Divider />
-            <Menu.Item
-              title="Manual log"
-              disabled
-              titleStyle={{ color: "#bbb" }}
-            />
-            <Menu.Item
-              onPress={() => navigateTo('/(tabs)/(activities)/(add-metric)/add-exercise')}
-              title="Exercise"
-              titleStyle={{ color: "#222" }}
-            />
-            <Menu.Item
-              onPress={() => navigateTo('/(tabs)/(activities)/(add-metric)/add-sleep')}
-              title="Sleep"
-              titleStyle={{ color: "#222" }}
-            />
-            <Menu.Item
-              onPress={() => navigateTo('/(tabs)/(activities)/(add-metric)/add-calories')}
-              title="Calories"
-              titleStyle={{ color: "#222" }}
-            />
-            <Menu.Item
-              onPress={() => navigateTo('/(tabs)/(activities)/(add-metric)/add-hydration')}
-              title="Water"
-              titleStyle={{ color: "#222" }}
-            />
-            <Menu.Item
-              onPress={() => navigateTo('/(tabs)/(activities)/(add-metric)/add-body-measurement')}
-              title="Body measurement"
-              titleStyle={{ color: "#222" }}
-            />
-          </Menu>
+  const CollectionItem = ({
+    icon,
+    label,
+    bgColor,
+    route,
+  }: CollectionItemProps) => {
+    return (
+      <TouchableOpacity
+        style={[styles.card]}
+        onPress={() => router.push(route)}
+      >
+        <View style={styles.cardContent}>
+          <View style={[styles.iconWrapper, { backgroundColor: bgColor }]}>
+            {icon}
+          </View>
+          <Text style={styles.label}>{label}</Text>
         </View>
-      </View>
-    </Provider>
+      </TouchableOpacity>
+    );
+  };
+
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+      <StatusBar
+        barStyle="dark-content"
+        translucent
+        backgroundColor="transparent"
+      />
+      <ScreenTitle
+        title="Collection"
+        style={{ marginTop: Platform.OS === "android" ? 40 : 0 }}
+      />
+      <FlatList
+        style={styles.container}
+        data={collectionData}
+        renderItem={({ item }) => (
+          <CollectionItem
+            icon={item.icon}
+            label={item.label}
+            bgColor={item.bgColor}
+            route={item.route}
+          />
+        )}
+      />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff', paddingHorizontal: 20, paddingTop: 40 },
-  header: { fontSize: 22, fontWeight: '600', marginBottom: 20 },
-  scrollContent: { paddingBottom: 100 },
+  container: {
+    backgroundColor: "#fff",
+  },
   card: {
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOpacity: 0.06,
-    shadowRadius: 5,
-    shadowOffset: { width: 0, height: 2 },
-    backgroundColor: '#f0f0f0',
-  },
-  cardContent: { flexDirection: 'row', alignItems: 'center' },
-  iconWrapper: {
-    backgroundColor: '#fff',
-    padding: 12,
-    borderRadius: 25,
-    marginRight: 12,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
+    width: "90%",
+    alignSelf: "center",
+    borderRadius: 10,
+    padding: 10,
+    marginTop: 10,
+    marginBottom: 15,
+    backgroundColor: "white",
+    shadowColor: "#000",
+    shadowOpacity: 0.25,
+    shadowOffset: { width: 2, height: 2 },
     shadowRadius: 3,
-    shadowOffset: { width: 0, height: 1 },
+    elevation: 3,
   },
-  label: { fontSize: 16, fontWeight: '500' },
-  fabWrapper: {
-    position: 'absolute',
-    right: 26,
-    bottom: 34,
+  cardContent: { flexDirection: "row", alignItems: "center", gap: 20 },
+  iconWrapper: {
+    padding: 10,
+    borderRadius: 999,
+    width: 72,
+    height: 72,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  fabButton: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.20,
-    shadowRadius: 5,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 6,
+  label: {
+    ...fonts.titleMedium,
   },
-  overlay: {
-    position: 'absolute',
-    left: 0, right: 0, top: 0, bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.18)', // Màu tối nhẹ, muốn mạnh hơn tăng 0.18 lên 0.3
-    zIndex: 10,
-  }
 });
