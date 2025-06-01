@@ -16,17 +16,23 @@ import {
   Text,
   View,
 } from "react-native";
+import Toast from "react-native-toast-message";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function Index() {
+  const dispatch = useDispatch();
   const userInfo = useSelector(selectUserInfo);
 
   if (userInfo._id === null) {
+    Toast.show({
+      text1: "Your section is expired.",
+      text2: "Please login again!",
+    });
+    dispatch(logout());
   }
 
-  const dispatch = useDispatch();
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <StatusBar
         barStyle="dark-content"
         translucent

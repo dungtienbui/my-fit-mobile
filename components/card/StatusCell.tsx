@@ -65,6 +65,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 10,
+    marginBottom: 5,
+    borderWidth: 0.2,
+    borderColor: colors.tertiary2,
   },
   textContainer: {
     width: "80%",

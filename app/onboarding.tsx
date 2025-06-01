@@ -1,14 +1,16 @@
+import { colors } from "@/theme/colors";
+import { fonts } from "@/theme/fonts";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-  View,
-  Text,
-  Button,
-  ImageBackground,
   Image,
-  StyleSheet,
+  ImageBackground,
   Pressable,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
-import { useRouter } from "expo-router";
 import Swiper from "react-native-swiper";
 
 export default function Onboarding() {
@@ -20,74 +22,87 @@ export default function Onboarding() {
   };
 
   return (
-    <Swiper loop={false} showsPagination={true}>
-      <ImageBackground
-        source={require("../assets/images/background.png")}
-        style={styles.container}
+    <>
+      <StatusBar
+        translucent
+        backgroundColor="transparent"
+        barStyle="dark-content"
+      />
+      <Swiper
+        loop={false}
+        showsPagination={true}
+        autoplay
+        autoplayTimeout={2}
+        activeDotColor={colors.primary1}
+        paginationStyle={{ marginBottom: 30 }}
       >
-        <Image
-          source={require("../assets/images/Illustration1.png")}
-          resizeMode="contain"
-          style={styles.logo}
-        />
-        <View style={styles.DescriptionContainer}>
-          <Text style={styles.header}>Chào mừng đến với MyFIT</Text>
-          <Text style={styles.headline}>
-            Bắt đầu hành trình sống khỏe cùng MyFIT
-          </Text>
-          <Text style={styles.description}>
-            Người bạn đồng hành tin cậy trong việc theo dõi sức khoẻ cá nhân của
-            bạn.
-          </Text>
-        </View>
-      </ImageBackground>
-
-      <ImageBackground
-        source={require("../assets/images/background.png")}
-        style={styles.container}
-      >
-        <Image
-          source={require("../assets/images/Illustration2.png")}
-          resizeMode="contain"
-          style={styles.logo}
-        />
-        <View style={styles.DescriptionContainer}>
-          <Text style={styles.header}>Theo dõi sức khoẻ hàng ngày</Text>
-          <Text style={styles.headline}>Sức khoẻ trong tầm tay</Text>
-          <Text style={styles.description}>
-            Ghi nhận số bước, thời gian ngủ, lượng calo tiêu thụ và cân nặng để
-            bạn luôn nắm bắt tình trạng sức khoẻ mỗi ngày.
-          </Text>
-        </View>
-      </ImageBackground>
-
-      <ImageBackground
-        source={require("../assets/images/background.png")}
-        style={styles.container}
-      >
-        <Image
-          source={require("../assets/images/Illustration3.png")}
-          resizeMode="contain"
-          style={styles.logo}
-        />
-        <View style={styles.DescriptionContainer}>
-          <Text style={styles.header}>Đặt mục tiêu & Nhắc nhở</Text>
-          <Text style={styles.headline}>Chinh phục mục tiêu</Text>
-          <Text style={styles.description}>
-            Đặt mục tiêu cá nhân và nhận thông báo nhắc nhở để duy trì động lực
-            và hướng tới lối sống lành mạnh.
-          </Text>
-        </View>
-        <Pressable
-          onPressIn={() => setIsHovered(true)} // Sự kiện khi nhấn vào phần tử
-          onPressOut={() => setIsHovered(false)} // Sự kiện khi nhả tay khỏi phần tử
-          onPress={handleFinish}
-          style={[styles.button, isHovered && styles.hovered]} // Áp dụng style khi hover hoặc nhấn
+        <ImageBackground
+          source={require("../assets/images/background.png")}
+          style={styles.container}
         >
-          <Text style={styles.buttonText}>Bắt đầu ngay!</Text>
-        </Pressable>
-      </ImageBackground>
-    </Swiper>
+          <Image
+            source={require("../assets/images/Illustration1.png")}
+            resizeMode="contain"
+            style={styles.logo}
+          />
+          <View style={styles.DescriptionContainer}>
+            <Text style={styles.header}>Welcome to MyFIT!</Text>
+            <Text style={styles.headline}>
+              Start your healthy living journey with MyFIT
+            </Text>
+            <Text style={styles.description}>
+              Your trusted companion in tracking your personal health
+            </Text>
+          </View>
+        </ImageBackground>
+
+        <ImageBackground
+          source={require("../assets/images/background.png")}
+          style={styles.container}
+        >
+          <Image
+            source={require("../assets/images/Illustration2.png")}
+            resizeMode="contain"
+            style={styles.logo}
+          />
+          <View style={styles.DescriptionContainer}>
+            <Text style={styles.header}>Daily health tracking</Text>
+            <Text style={styles.headline}>Health at your fingertips</Text>
+            <Text style={styles.description}>
+              Record your steps, sleep duration, calories burned, and weight to
+              stay on top of your health every day
+            </Text>
+          </View>
+        </ImageBackground>
+
+        <ImageBackground
+          source={require("../assets/images/background.png")}
+          style={styles.container}
+        >
+          <Image
+            source={require("../assets/images/Illustration3.png")}
+            resizeMode="contain"
+            style={styles.logo}
+          />
+          <View style={styles.DescriptionContainer}>
+            <Text style={styles.header}>Set goals & get reminders</Text>
+            <Text style={styles.headline}>Achieve your goals</Text>
+            <Text style={styles.description}>
+              Set personal goals and receive reminder notifications to stay
+              motivated and work towards a healthy lifestyle
+            </Text>
+          </View>
+          <Pressable
+            onPressIn={() => setIsHovered(true)} // Sự kiện khi nhấn vào phần tử
+            onPressOut={() => setIsHovered(false)} // Sự kiện khi nhả tay khỏi phần tử
+            onPress={handleFinish}
+            style={[styles.button, isHovered && styles.hovered]} // Áp dụng style khi hover hoặc nhấn
+          >
+            <Text style={styles.buttonText}>Bắt đầu ngay!</Text>
+          </Pressable>
+        </ImageBackground>
+      </Swiper>
+    </>
   );
 }
 
@@ -104,24 +119,22 @@ const styles = StyleSheet.create({
   },
   DescriptionContainer: {
     width: "80%",
-    marginTop: 10,
-    marginBottom: 30,
+    marginTop: 30,
+    marginBottom: 20,
   },
   header: {
-    fontSize: 22,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 23,
-  },
-  headline: {
-    fontSize: 16,
-    fontWeight: "400",
+    ...fonts.titleLarge,
+    fontFamily: "Roboto_500Medium",
     textAlign: "center",
     marginBottom: 10,
   },
+  headline: {
+    ...fonts.titleMedium,
+    textAlign: "center",
+    marginBottom: 15,
+  },
   description: {
-    fontSize: 14,
-    fontWeight: "200",
+    ...fonts.bodyMedium,
     textAlign: "center",
   },
   button: {

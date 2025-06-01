@@ -107,7 +107,7 @@ export default function RegisterPassword() {
 
       saveToken(data.access_token);
 
-      router.replace("/(tabs)");
+      router.replace("/(tabs)/(home)");
 
       Toast.show({
         type: "success",
@@ -146,7 +146,12 @@ export default function RegisterPassword() {
       resizeMode="cover"
       style={{ flex: 1, zIndex: -1 }}
     >
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          paddingTop: Platform.OS === "android" ? 50 : 0,
+        }}
+      >
         <ScreenTitle
           title="Register"
           LeadingIconButton={
@@ -173,7 +178,7 @@ export default function RegisterPassword() {
               placeholder="Password..."
               onChangeText={setPassword}
               width="90%"
-              height={50}
+              height={70}
               isEmailInput
               helperText={checkValidPassword().message}
               helperIcon={
@@ -202,6 +207,8 @@ export default function RegisterPassword() {
                 </Pressable>
               }
               secureTextEntry={!isShowPassword}
+              inputContainerStyle={{ borderColor: "#000" }}
+              inputMode="text"
             />
 
             <CustomInput
@@ -211,7 +218,7 @@ export default function RegisterPassword() {
               placeholder="Password..."
               onChangeText={setConfirmPassword}
               width="90%"
-              height={50}
+              height={70}
               isEmailInput
               helperText={checkConfirmPassword().message}
               helperIcon={
@@ -249,6 +256,8 @@ export default function RegisterPassword() {
                 </Pressable>
               }
               secureTextEntry={!isShowConfirmPassword}
+              inputContainerStyle={{ borderColor: "#000" }}
+              inputMode="text"
             />
           </View>
 

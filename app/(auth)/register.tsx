@@ -13,7 +13,7 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
-  View,
+  View
 } from "react-native";
 
 export default function Register() {
@@ -45,7 +45,12 @@ export default function Register() {
       resizeMode="cover"
       style={{ flex: 1, zIndex: -1 }}
     >
-      <SafeAreaView style={{ borderWidth: 1, borderColor: "red", flex: 1 }}>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          paddingTop: Platform.OS === "android" ? 50 : 0,
+        }}
+      >
         <ScreenTitle
           title="Register"
           LeadingIconButton={
@@ -65,7 +70,7 @@ export default function Register() {
             placeholder="example@gmail.com"
             onChangeText={setInput}
             width="90%"
-            height={50}
+            height={70}
             isEmailInput
             helperText={
               checkValidEmail().isCorrect === false
@@ -85,6 +90,8 @@ export default function Register() {
                 ? "success"
                 : "default"
             }
+            inputContainerStyle={{ borderColor: "#000" }}
+            inputMode="email"
           />
 
           <KeyboardAvoidingView

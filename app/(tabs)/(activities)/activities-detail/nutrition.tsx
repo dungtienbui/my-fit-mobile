@@ -34,8 +34,6 @@ type SectionData = {
   data: HealthMetricResponseDto[];
 };
 
-const DaysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
 const BodyMeasurementScreen = () => {
   const [typeMeasurement, setTypeMeasurement] = useState<"calories" | "water">(
     "calories"
@@ -51,9 +49,6 @@ const BodyMeasurementScreen = () => {
     SectionData[]
   >([]);
   const [dataWaterRender, setWaterDataRender] = useState<SectionData[]>([]);
-
-  console.log("weekStart: ", weekStart.toISOString());
-  console.log("weekEnd: ", weekEnd.toISOString());
 
   const {
     data: caloriesData,
@@ -265,7 +260,7 @@ const BodyMeasurementScreen = () => {
                     <Ionicons name="checkmark" size={16} color="#fff" />
                   )}
                 </View>
-                {idx === TodayDayNumber - 1 ? (
+                {idx === TodayDayNumber ? (
                   <Ionicons
                     name="thumbs-up"
                     size={10}

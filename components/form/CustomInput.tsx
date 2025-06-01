@@ -30,6 +30,7 @@ interface CustomInputProps {
   readonly?: boolean;
   style?: ViewStyle;
   inputStyle?: TextStyle;
+  inputContainerStyle?: ViewStyle;
   labelStyle?: TextStyle;
   width?: DimensionValue;
   height?: DimensionValue;
@@ -57,6 +58,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
   readonly = false,
   style,
   inputStyle,
+  inputContainerStyle,
   labelStyle,
   width = "80%",
   height = "auto",
@@ -87,6 +89,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
     inputStatus === "success" && {
       backgroundColor: "#F0FDF4",
     },
+    inputContainerStyle,
   ];
 
   return (

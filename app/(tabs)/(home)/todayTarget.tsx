@@ -6,6 +6,7 @@ import { selectUserInfo } from "@/store/features/user/userSlice";
 import { useGetGoalsQuery } from "@/store/services/apis/goalsApi";
 import { colors } from "@/theme/colors";
 import { fonts } from "@/theme/fonts";
+import { shadow } from "@/theme/shadow";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router } from "expo-router";
 import { useEffect } from "react";
@@ -63,7 +64,7 @@ export default function TodayTarget() {
   }, [userInfo]);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <ScreenTitle
         title="Today target"
         LeadingIconButton={
@@ -253,6 +254,7 @@ const styles = StyleSheet.create({
     gap: 15,
     backgroundColor: "#fff",
     borderRadius: 10,
+    ...shadow.shap,
   },
   avatar: {
     width: 50,
@@ -273,6 +275,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 10,
     borderRadius: 15,
+    ...shadow.shap,
   },
 
   measurementContainer: {},

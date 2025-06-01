@@ -1,5 +1,7 @@
 import ScreenTitle from "@/components/screen/ScreenTitle";
+import { colors } from "@/theme/colors";
 import { fonts } from "@/theme/fonts";
+import { shadow } from "@/theme/shadow";
 import {
   Entypo,
   FontAwesome5,
@@ -7,8 +9,10 @@ import {
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import { Href, useRouter } from "expo-router";
-import React, { JSX, useState } from "react";
+import React, { JSX, useRef, useState } from "react";
 import {
+  Animated,
+  Dimensions,
   FlatList,
   Platform,
   SafeAreaView,
@@ -53,16 +57,12 @@ const collectionData: CollectionItemProps[] = [
   },
 ];
 
-export default function CollectionScreen() {
-  const [visible, setVisible] = useState(false);
-  const openMenu = () => setVisible(true);
-  const closeMenu = () => setVisible(false);
-  const router = useRouter();
+const SCREEN_WIDTH = Dimensions.get("window").width;
 
-  const navigateTo = (path: Href) => {
-    closeMenu();
-    router.push(path);
-  };
+const MENU_WIDTH = Math.round(SCREEN_WIDTH * 0.8);
+
+export default function CollectionScreen() {
+  const router = useRouter();
 
   const CollectionItem = ({
     icon,
@@ -83,6 +83,28 @@ export default function CollectionScreen() {
         </View>
       </TouchableOpacity>
     );
+  };
+
+  const [visible, setVisible] = useState(false);
+  const translateX = useRef(new Animated.Value(SCREEN_WIDTH)).current;
+
+  const openMenu = () => {
+    setVisible(true);
+    Animated.timing(translateX, {
+      toValue: SCREEN_WIDTH - MENU_WIDTH,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const closeMenu = () => {
+    Animated.timing(translateX, {
+      toValue: SCREEN_WIDTH,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => {
+      setVisible(false);
+    });
   };
 
   return (
@@ -108,6 +130,101 @@ export default function CollectionScreen() {
           />
         )}
       />
+      <TouchableOpacity
+        onPress={() => {
+          openMenu();
+        }}
+        activeOpacity={0.75}
+        style={{
+          // borderWidth: 1,
+          position: "absolute",
+          bottom: 50,
+          right: 30,
+          borderRadius: 999,
+          backgroundColor: "white",
+          ...shadow.heavy,
+        }}
+      >
+        <Ionicons name="add" size={70} color={colors.primary1} />
+      </TouchableOpacity>
+      {visible && (
+        <>
+          {/* Nền mờ */}
+          <TouchableOpacity
+            style={styles.overlay}
+            activeOpacity={1}
+            onPress={closeMenu}
+          />
+
+          {/* Menu trượt vào */}
+          <Animated.View style={[styles.menu, { transform: [{ translateX }] }]}>
+            <View style={styles.section}>
+              <Text style={styles.sectionTile}>Live tracking</Text>
+              <View style={styles.selectionContainer}>
+                <TouchableOpacity onPress={closeMenu}>
+                  <Text style={styles.textInSection}>Exercise</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={closeMenu}>
+                  <Text style={styles.textInSection}>Sleep</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View style={styles.section}>
+              <Text style={styles.sectionTile}>Add manual log</Text>
+              <View style={styles.selectionContainer}>
+                <TouchableOpacity
+                  onPress={() => {
+                    closeMenu();
+                    router.push(
+                      "/(tabs)/(activities)/(add-metric)/add-exercise"
+                    );
+                  }}
+                >
+                  <Text style={styles.textInSection}>Exercise</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    closeMenu();
+                    router.push("/(tabs)/(activities)/(add-metric)/add-sleep");
+                  }}
+                >
+                  <Text style={styles.textInSection}>Sleep</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    closeMenu();
+                    router.push(
+                      "/(tabs)/(activities)/(add-metric)/add-calories"
+                    );
+                  }}
+                >
+                  <Text style={styles.textInSection}>Calories</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    closeMenu();
+                    router.push(
+                      "/(tabs)/(activities)/(add-metric)/add-hydration"
+                    );
+                  }}
+                >
+                  <Text style={styles.textInSection}>Water</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    closeMenu();
+                    router.push(
+                      "/(tabs)/(activities)/(add-metric)/add-body-measurement"
+                    );
+                  }}
+                >
+                  <Text style={styles.textInSection}>Body measurements</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Animated.View>
+        </>
+      )}
     </SafeAreaView>
   );
 }
@@ -141,5 +258,44 @@ const styles = StyleSheet.create({
   },
   label: {
     ...fonts.titleMedium,
+  },
+  overlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+    backgroundColor: "rgba(0,0,0,0.3)",
+  },
+  menu: {
+    position: "absolute",
+    bottom: 45,
+    right: 0,
+    width: MENU_WIDTH + 20,
+    height: 400,
+    backgroundColor: "white",
+    padding: 16,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowOffset: { width: -2, height: 0 },
+    elevation: 4,
+    borderTopLeftRadius: 20,
+    borderBottomLeftRadius: 20,
+    gap: 30,
+    justifyContent: "center",
+  },
+  sectionTile: {
+    color: colors.tertiary4,
+    ...fonts.bodyMedium,
+  },
+  section: {
+    gap: 15,
+  },
+  selectionContainer: {
+    marginLeft: 15,
+    gap: 20,
+  },
+  textInSection: {
+    ...fonts.titleSmall,
   },
 });

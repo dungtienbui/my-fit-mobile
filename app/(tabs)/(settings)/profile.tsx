@@ -116,7 +116,7 @@ export default function Profile() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <ScreenTitle
         title="Your Profile"
         style={{ marginTop: Platform.OS === "android" ? 40 : 0 }}

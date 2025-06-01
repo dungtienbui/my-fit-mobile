@@ -43,9 +43,6 @@ const ExerciseScreen = () => {
 
   const [dataRender, setDataRender] = useState<SectionData[]>([]);
 
-  console.log("weekStart: ", weekStart.toISOString());
-  console.log("weekEnd: ", weekEnd.toISOString());
-
   const { data, isLoading, error } = useGetHealthMetricsByDateRangeAndTypeQuery(
     {
       metricType: "exercise",
@@ -175,7 +172,7 @@ const ExerciseScreen = () => {
                     <Ionicons name="checkmark" size={16} color="#fff" />
                   )}
                 </View>
-                {idx === TodayDayNumber - 1 ? (
+                {idx === TodayDayNumber ? (
                   <Ionicons
                     name="thumbs-up"
                     size={10}

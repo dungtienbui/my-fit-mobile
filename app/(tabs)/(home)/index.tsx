@@ -94,7 +94,7 @@ export default function Index() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <StatusBar
         translucent
         backgroundColor="transparent"
@@ -213,15 +213,17 @@ export default function Index() {
               </TouchableOpacity>
             </View>
             <View style={styles.todayStatus}>
-              <Text style={{ ...fonts.titleMedium, marginBottom: 15 }}>
+              <Text style={{ ...fonts.titleMedium, marginBottom: 10 }}>
                 Today status
               </Text>
               <View style={{ gap: 15 }}>
                 <View
                   style={{
                     flexDirection: "row",
+                    flexWrap: "wrap",
                     justifyContent: "space-evenly",
                     alignItems: "center",
+                    gap: 10,
                   }}
                 >
                   <StatusCell
@@ -244,14 +246,6 @@ export default function Index() {
                     ]}
                     image={require("../../../assets/images/basicfood.png")}
                   />
-                </View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-evenly",
-                    alignItems: "center",
-                  }}
-                >
                   <StatusCell
                     type="Walking"
                     values={[
@@ -297,7 +291,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 20,
     paddingHorizontal: 20,
-    marginBottom: Platform.OS === "android" ? 60 : 20,
+    // marginBottom: Platform.OS === "android" ? 60 : 20,
   },
   headerContainer: {
     width: "100%",

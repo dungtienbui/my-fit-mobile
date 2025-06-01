@@ -29,12 +29,14 @@ export const shadow = StyleSheet.create({
     }),
   },
   heavy: {
+    borderWidth: 0.5,
+    borderColor: "#d5d5d5",
     ...Platform.select({
       ios: {
         shadowColor: "#000",
-        shadowOffset: { width: 0, height: 6 },
+        shadowOffset: { width: 6, height: 6 },
         shadowOpacity: 0.25,
-        shadowRadius: 8,
+        shadowRadius: 7,
       },
       android: {
         elevation: 8,

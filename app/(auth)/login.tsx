@@ -43,7 +43,7 @@ export default function Login() {
 
       dispatch(setCredentials({ isLoggedIn: true }));
       saveToken(result.access_token);
-      router.replace("/(tabs)");
+      router.replace("/(tabs)/(home)");
     } catch (err) {
       console.error("Đăng nhập thất bại:", err);
     }
