@@ -25,8 +25,8 @@ export default function Login() {
   const [login, { isLoading, error }] = useLoginMutation();
 
   const [inputs, setInputs] = useState({
-    email: "john.doe@example.com",
-    password: "password123",
+    email: "",
+    password: "",
   });
 
   const [isShowPassword, setIsShowPassword] = useState(false);
