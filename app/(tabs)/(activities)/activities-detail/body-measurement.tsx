@@ -94,14 +94,14 @@ const BodyMeasurementScreen = () => {
 
   useEffect(() => {
     if (heightData) {
-      // console.log("data: ", heightData);
+      console.log("heightData: ", heightData);
       const groupedData = groupByDate(heightData);
       // console.log("groupedData: ", JSON.stringify(groupedData));
       setHeightDataRender(groupedData);
     }
 
     if (weightData) {
-      // console.log("data: ", weightData);
+      console.log("weightData: ", weightData);
       const groupedData = groupByDate(weightData);
       // console.log("groupedData: ", JSON.stringify(groupedData));
       setWeightDataRender(groupedData);

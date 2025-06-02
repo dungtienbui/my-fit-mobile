@@ -3,7 +3,7 @@ import { useGetGoalsQuery } from "@/store/services/apis/goalsApi";
 import { fonts } from "@/theme/fonts";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React, { useEffect } from "react";
+import React from "react";
 import {
   ActivityIndicator,
   Platform,
@@ -89,9 +89,9 @@ export default function Index() {
     }
   };
 
-  useEffect(() => {
-    console.warn("goals: ", goals);
-  }, [goals]);
+  // useEffect(() => {
+  //   console.warn("goals: ", goals);
+  // }, [goals]);
 
   const sleepTimeCombine = (start?: Date | string, end?: Date | string) => {
     if (!start || !end) return "";

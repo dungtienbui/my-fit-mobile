@@ -12,7 +12,7 @@ export default function AuthIndex() {
 
   useEffect(() => {
     if (isLoggedIn) {
-      router.replace("/(tabs)");
+      router.replace("/(tabs)/(home)");
     } else {
       router.replace("/(auth)/login");
     }

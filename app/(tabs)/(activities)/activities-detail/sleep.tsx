@@ -85,7 +85,7 @@ const SleppScreen = () => {
     if (data) {
       console.log("data: ", data);
       const groupedData = groupByDate(data);
-      console.log("groupedData: ", JSON.stringify(groupedData));
+      // console.log("groupedData: ", JSON.stringify(groupedData));
       setDataRender(groupedData);
 
       const checked = new Array(DaysOfWeek.length).fill(false);
@@ -95,7 +95,7 @@ const SleppScreen = () => {
         checked[date.getDay()] = true;
       });
 
-      console.log("checked: ", checked);
+      // console.log("checked: ", checked);
       setDateChecked(checked);
     }
   }, [data]);

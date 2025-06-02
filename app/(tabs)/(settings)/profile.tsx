@@ -82,9 +82,10 @@ export default function Profile() {
         text2: "Your profile has been updated successfully.",
         type: "success",
       });
-    }
+      console.log("updateUserData: ", updateUserData);
 
-    console.log("updateUserData: ", updateUserData);
+      router.back();
+    }
   }, [updateUserData]);
 
   useEffect(() => {

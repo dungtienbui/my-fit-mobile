@@ -4,10 +4,17 @@ import ScreenTitle from "@/components/screen/ScreenTitle";
 import { useUpdateGoalMutation } from "@/store/services/apis/goalsApi";
 import { colors } from "@/theme/colors";
 import { fonts } from "@/theme/fonts";
+import {
+  getNotificationId,
+  removeNotificationId,
+  scheduleDailyReminder,
+  storeNotificationId,
+} from "@/utils/notificationUtils";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
+import { subMinutes } from "date-fns";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -84,9 +91,6 @@ const Sleep = () => {
       .padStart(2, "0")}`;
 
   const handleSave = async () => {
-    console.log("startTime: ", startTime);
-    console.log("endTime: ", endTime);
-
     await setGoal({
       id: id,
       data: {
@@ -106,8 +110,44 @@ const Sleep = () => {
         text2: "Your goal has saved successfully.",
         type: "success",
       });
-      console.log("data: ", data);
-      router.back();
+
+      const setupSleepNotification = async () => {
+        const id = await getNotificationId(
+          "sleepGoalDailyReminderNotification"
+        );
+
+        const startTimeNoti = subMinutes(startTime, 15);
+
+        console.log("startTimeNoti: ", startTimeNoti.toLocaleString("vi"));
+
+        const hour = startTimeNoti.getHours();
+        const minute = startTimeNoti.getMinutes();
+
+        if (id !== null) {
+          await removeNotificationId(id);
+        }
+
+        const newId = await scheduleDailyReminder(
+          hour,
+          minute,
+          "Hey, it's almost bedtime! 😴",
+          "Let's get some quality rest tonight."
+        );
+
+        if (newId) {
+          await storeNotificationId(
+            "sleepGoalDailyReminderNotification",
+            newId
+          );
+        }
+      };
+
+      const process = async () => {
+        await setupSleepNotification();
+        router.back();
+      };
+
+      process();
     }
   }, [data]);
 

@@ -98,14 +98,14 @@ const BodyMeasurementScreen = () => {
 
   useEffect(() => {
     if (caloriesData) {
-      // console.log("data: ", heightData);
+      console.log("caloriesData: ", caloriesData);
       const groupedData = groupByDate(caloriesData);
       // console.log("groupedData: ", JSON.stringify(groupedData));
       setCaloriesDataDataRender(groupedData);
     }
 
     if (waterData) {
-      // console.log("data: ", weightData);
+      console.log("waterData: ", waterData);
       const groupedData = groupByDate(waterData);
       // console.log("groupedData: ", JSON.stringify(groupedData));
       setWaterDataRender(groupedData);

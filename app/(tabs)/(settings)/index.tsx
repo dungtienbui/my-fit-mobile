@@ -3,9 +3,18 @@ import { logout } from "@/store/features/auth/authSlice";
 import { selectUserInfo } from "@/store/features/user/userSlice";
 import { colors } from "@/theme/colors";
 import { fonts } from "@/theme/fonts";
+import {
+  cancelAllScheduledNotification,
+  removeNotificationId,
+  scheduleDailyReminder,
+  storeNotificationId,
+} from "@/utils/notificationUtils";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router } from "expo-router";
+import { useState } from "react";
 import {
+  ActivityIndicator,
+  Alert,
   Image,
   Platform,
   Pressable,
@@ -13,23 +22,57 @@ import {
   ScrollView,
   StatusBar,
   StyleSheet,
+  Switch,
   Text,
   View,
 } from "react-native";
-import Toast from "react-native-toast-message";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function Index() {
   const dispatch = useDispatch();
   const userInfo = useSelector(selectUserInfo);
 
-  if (userInfo._id === null) {
-    Toast.show({
-      text1: "Your section is expired.",
-      text2: "Please login again!",
-    });
-    dispatch(logout());
-  }
+  const [isEnabled, setIsEnabled] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const toggleSwitch = () => {
+    const newValue = !isEnabled;
+    setIsEnabled(newValue); // Cập nhật UI ngay
+    setLoading(true);
+
+    (async () => {
+      try {
+        await Promise.all([
+          cancelAllScheduledNotification(),
+          removeNotificationId("goalsDailyReminderNotification"),
+          removeNotificationId("sleepGoalDailyReminderNotification"),
+        ]);
+
+        if (newValue) {
+          const goalsId = await scheduleDailyReminder(
+            11,
+            29,
+            "🎯 Check your goals for today",
+            "Don't forget to review and complete your health goals!"
+          );
+          if (goalsId) {
+            await storeNotificationId(
+              "goalsDailyReminderNotification",
+              goalsId
+            );
+          }
+
+          Alert.alert(
+            "Sleep Time Not Set",
+            "Your bedtime has been reset. Please go to the Challenges section to set your sleep schedule."
+          );
+        }
+      } catch (error) {
+        console.log(error);
+      }
+      setLoading(false);
+    })();
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
@@ -141,11 +184,8 @@ export default function Index() {
                   color={colors.tertiary4}
                 />
                 <Text style={styles.itemText}>Notification</Text>
-                <Ionicons
-                  name="chevron-forward-outline"
-                  size={25}
-                  color={colors.tertiary4}
-                />
+                {loading && <ActivityIndicator />}
+                <Switch value={isEnabled} onValueChange={toggleSwitch} />
               </View>
 
               <View style={styles.itemContainter}>
