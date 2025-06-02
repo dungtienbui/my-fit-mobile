@@ -5,13 +5,15 @@ import { colors } from "@/theme/colors";
 import { fonts } from "@/theme/fonts";
 import {
   cancelAllScheduledNotification,
+  loadNotificationStatus,
   removeNotificationId,
+  saveNotificationStatus,
   scheduleDailyReminder,
   storeNotificationId,
 } from "@/utils/notificationUtils";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -35,12 +37,29 @@ export default function Index() {
   const [isEnabled, setIsEnabled] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    const init = async () => {
+      setLoading(true);
+      const enabled = await loadNotificationStatus();
+      console.log("loadNotificationStatus: ", enabled);
+      setIsEnabled(enabled);
+      setLoading(false);
+    };
+    init();
+  }, []);
+
   const toggleSwitch = () => {
     const newValue = !isEnabled;
     setIsEnabled(newValue); // Cập nhật UI ngay
     setLoading(true);
 
     (async () => {
+      try {
+        await saveNotificationStatus(newValue);
+      } catch (error) {
+        console.error("saveNotificationStatus error: ", error);
+      }
+      
       try {
         await Promise.all([
           cancelAllScheduledNotification(),
@@ -68,7 +87,7 @@ export default function Index() {
           );
         }
       } catch (error) {
-        console.log(error);
+        console.error("Cancel Scheduled Notification Error: ", error);
       }
       setLoading(false);
     })();
@@ -185,7 +204,11 @@ export default function Index() {
                 />
                 <Text style={styles.itemText}>Notification</Text>
                 {loading && <ActivityIndicator />}
-                <Switch value={isEnabled} onValueChange={toggleSwitch} />
+                <Switch
+                  value={isEnabled}
+                  onValueChange={toggleSwitch}
+                  disabled={loading}
+                />
               </View>
 
               <View style={styles.itemContainter}>

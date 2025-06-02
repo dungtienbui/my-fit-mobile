@@ -103,3 +103,27 @@ export async function removeNotificationId(name: string) {
     console.log("Lỗi khi xóa dữ liệu:", e);
   }
 }
+
+export const saveNotificationStatus = async (enabled: boolean) => {
+  try {
+    await AsyncStorage.setItem("notification_enabled", JSON.stringify(enabled));
+    console.log("Lưu trạng thái thành công");
+  } catch (e) {
+    console.error("Lỗi khi lưu trạng thái:", e);
+  }
+};
+
+export const loadNotificationStatus = async () => {
+  try {
+    const value = await AsyncStorage.getItem("notification_enabled");
+    if (value !== null) {
+      const enabled = JSON.parse(value);
+      console.log("Trạng thái thông báo:", enabled);
+      return enabled;
+    }
+    return false; // Mặc định nếu chưa có
+  } catch (e) {
+    console.error("Lỗi khi đọc trạng thái:", e);
+    return false;
+  }
+};

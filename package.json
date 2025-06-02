@@ -71,6 +71,7 @@
     "eslint": "^9.25.0",
     "eslint-config-expo": "~9.2.0",
     "npm-force-resolutions": "^0.0.10",
+    "react-native-make": "^1.0.1",
     "typescript": "~5.8.3"
   },
   "private": true,
