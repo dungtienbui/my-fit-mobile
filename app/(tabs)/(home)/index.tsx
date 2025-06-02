@@ -237,14 +237,24 @@ export default function Index() {
                     ]}
                     image={require("../../../assets/images/Sleep-Graph.png")}
                     joiner=" "
+                    valuesPrintHorizontal
+                    imageStyle={{ width: 120 }}
                   />
                   <StatusCell
                     type="Calories & Water"
                     values={[
-                      { unit: "kCal", value: todayData.calories.toFixed(2) },
+                      { unit: "kCal", value: todayData.calories.toFixed(0) },
                       { unit: "L", value: todayData.water.toFixed(2) },
                     ]}
                     image={require("../../../assets/images/basicfood.png")}
+                    imageStyle={{
+                      position: "absolute",
+                      bottom: -8,
+                      right: 20,
+                      width: 100,
+                      height: 100,
+                      zIndex: -1,
+                    }}
                   />
                   <StatusCell
                     type="Walking"
@@ -256,9 +266,20 @@ export default function Index() {
                   <StatusCell
                     type="Activities"
                     values={[
-                      { unit: "h", value: todayData.activityTime.toFixed(2) },
+                      {
+                        unit: "h",
+                        value: Math.floor(todayData.activityTime / 60).toFixed(
+                          0
+                        ),
+                      },
+                      {
+                        unit: "m",
+                        value: (todayData.activityTime % 60).toFixed(0),
+                      },
                     ]}
+                    joiner=" "
                     image={require("../../../assets/images/statusActivities.png")}
+                    valuesPrintHorizontal
                   />
                 </View>
               </View>

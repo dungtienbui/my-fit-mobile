@@ -133,7 +133,7 @@ const AddHydration = () => {
   }, [saveError]);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <ScreenTitle
         title="Add hydration"
         LeadingIconButton={
@@ -228,6 +228,8 @@ const AddHydration = () => {
         {/* DateTimePicker */}
         {showPicker && (
           <DateTimePicker
+            textColor="black"
+            themeVariant="light"
             value={targetField === "waterDate" ? waterDate : waterTime}
             mode={mode}
             is24Hour={true}

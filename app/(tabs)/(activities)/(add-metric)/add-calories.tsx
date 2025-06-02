@@ -20,7 +20,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import Toast from "react-native-toast-message";
@@ -159,7 +159,7 @@ const AddCalories = () => {
   }, [saveError]);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <ScreenTitle
         title="Add calories"
         LeadingIconButton={
@@ -303,6 +303,8 @@ const AddCalories = () => {
         {/* DateTimePicker */}
         {showPicker && (
           <DateTimePicker
+            textColor="black"
+            themeVariant="light"
             value={targetField === "mealDate" ? mealDate : mealTime}
             mode={mode}
             is24Hour={true}

@@ -95,8 +95,8 @@ export function useTodayData() {
           (sum, r) => sum + (r.exerciseDetails?.duration ?? 0),
           0
         ) ?? 0;
-      // Giả sử muốn tính activityTime theo giờ
-      const activityTime = totalDuration / 60;
+      // Giả sử muốn tính activityTime phút
+      const activityTime = totalDuration;
       setTodayData((prev) => ({ ...prev, activityTime }));
     }
   }, [exerciseData]);

@@ -171,36 +171,39 @@ export default function TodayTarget() {
                 target={
                   goals?.activity_steps
                     ? goals?.activity_steps.value.toString()
-                    : todayData.walking.toString()
+                    : "0"
                 }
                 todayValue={todayData.walking.toString()}
                 unit="step"
                 image={require("../../../assets/images/today-target/walking.png")}
                 width="100%"
+                isGoalSet={goals?.activity_steps != undefined}
               />
               <TodayTargetCard
                 typeTarget="Water"
                 target={
                   goals?.nutrition_water
                     ? goals?.nutrition_water.value.toFixed(2)
-                    : todayData.water.toFixed(2)
+                    : "0"
                 }
                 todayValue={todayData.water.toFixed(2)}
                 unit="L"
-                image={require("../../../assets/images/today-target/walking.png")}
+                image={require("../../../assets/images/today-target/water.png")}
                 width="100%"
+                isGoalSet={goals?.nutrition_water != undefined}
               />
               <TodayTargetCard
                 typeTarget="Calories"
                 target={
                   goals?.nutrition_energyBurned
                     ? goals?.nutrition_energyBurned.value.toString()
-                    : todayData.calories.toString()
+                    : "0"
                 }
-                todayValue={todayData.walking.toString()}
+                todayValue={todayData.calories.toString()}
                 unit="Kcal"
                 image={require("../../../assets/images/today-target/calories.png")}
                 width="100%"
+                isGoalSet={goals?.nutrition_energyBurned != undefined}
               />
               <TodayTargetCard
                 typeTarget="Sleeping"
@@ -210,12 +213,13 @@ export default function TodayTarget() {
                         new Date(goals?.activity_sleeping.start),
                         new Date(goals?.activity_sleeping.end)
                       )
-                    : todayData.sleep.toFixed(2)
+                    : "0"
                 }
                 todayValue={formatMinutesToHoursMinutes(todayData.sleep)}
                 unit=""
                 image={require("../../../assets/images/today-target/sleeping.png")}
                 width="100%"
+                isGoalSet={goals?.activity_sleeping != undefined}
               />
 
               <TodayTargetCard
@@ -223,12 +227,13 @@ export default function TodayTarget() {
                 target={
                   goals?.activity_exerciseHours
                     ? goals?.activity_exerciseHours.value.toFixed(2)
-                    : todayData.activityTime.toFixed(2)
+                    : "0"
                 }
-                todayValue={todayData.activityTime.toFixed(2)}
-                unit="h"
+                todayValue={formatMinutesToHoursMinutes(todayData.activityTime)}
+                unit=""
                 image={require("../../../assets/images/today-target/activity.png")}
                 width="100%"
+                isGoalSet={goals?.activity_exerciseHours != undefined}
               />
             </View>
           </View>

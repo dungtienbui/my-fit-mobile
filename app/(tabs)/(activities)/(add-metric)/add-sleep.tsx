@@ -134,7 +134,7 @@ const SleepTimeForm = () => {
   }, [saveError]);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <ScreenTitle
         title="Add Sleep"
         LeadingIconButton={
@@ -235,6 +235,8 @@ const SleepTimeForm = () => {
         {/* DateTimePicker */}
         {showPicker && (
           <DateTimePicker
+            textColor="black"
+            themeVariant="light"
             value={
               targetField === "startDate"
                 ? startDate

@@ -192,7 +192,7 @@ const AddExercise = () => {
   }, [exerciseError, stepsError]);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <ScreenTitle
         title="Add exercise"
         LeadingIconButton={
@@ -397,6 +397,8 @@ const AddExercise = () => {
           {/* DateTimePicker */}
           {showPicker && (
             <DateTimePicker
+              textColor="black"
+              themeVariant="light"
               value={
                 targetField === "exerciseDate" ? exerciseDate : exerciseTime
               }

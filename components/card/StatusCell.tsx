@@ -4,9 +4,9 @@ import { shadow } from "@/theme/shadow";
 import React from "react";
 import {
   DimensionValue,
-  FlatList,
   Image,
   ImageSourcePropType,
+  ImageStyle,
   StyleSheet,
   Text,
   View,
@@ -18,9 +18,11 @@ type StatusCellProps = {
     value: string;
     unit: string;
   }[];
+  valuesPrintHorizontal?: boolean;
   image: ImageSourcePropType;
   size?: DimensionValue;
   joiner?: string;
+  imageStyle?: ImageStyle | undefined;
 };
 
 const StatusCell = ({
@@ -29,6 +31,8 @@ const StatusCell = ({
   image,
   size = 150,
   joiner,
+  valuesPrintHorizontal,
+  imageStyle,
 }: StatusCellProps) => {
   return (
     <View
@@ -36,7 +40,7 @@ const StatusCell = ({
     >
       <View style={styles.textContainer}>
         <Text style={styles.type}>{type}</Text>
-        <FlatList
+        {/* <FlatList
           data={values}
           keyExtractor={(_, index) => index.toString()}
           renderItem={({ item }) => (
@@ -51,9 +55,32 @@ const StatusCell = ({
               {joiner ?? "&"}
             </Text>
           )}
+        /> */}
+        <View
+          style={{
+            flexDirection: valuesPrintHorizontal === true ? "row" : "column",
+          }}
+        >
+          {values.map((item, key) => {
+            return (
+              <Text key={`${item.unit}-${key}`}>
+                <Text style={styles.value}>{item.value}</Text>
+                <Text style={styles.unit}>{item.unit}</Text>
+                {valuesPrintHorizontal === true && key < values.length - 1 ? (
+                  <Text style={{ ...fonts.bodySmall }}>{joiner}</Text>
+                ) : undefined}
+              </Text>
+            );
+          })}
+        </View>
+      </View>
+      <View style={styles.imageContainer}>
+        <Image
+          source={image}
+          style={[styles.image, imageStyle]}
+          resizeMode="contain"
         />
       </View>
-      <Image source={image} style={styles.image} resizeMode="contain" />
     </View>
   );
 };
@@ -63,20 +90,28 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: "center",
-    gap: 10,
+    // justifyContent: "center",
     marginBottom: 5,
     borderWidth: 0.2,
     borderColor: colors.tertiary2,
+    paddingTop: 10,
+  },
+  imageContainer: {
+    flex: 1,
+    width: "100%",
+    alignItems: "center",
   },
   textContainer: {
-    width: "80%",
+    width: 120,
   },
   image: {
-    height: "40%",
+    height: 70,
+    width: 80,
+    marginTop: 10,
   },
   type: {
     ...fonts.labelLarge,
+    marginBottom: 3,
   },
   value: {
     ...fonts.titleLarge,

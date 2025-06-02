@@ -1,3 +1,4 @@
+import { colors } from "@/theme/colors";
 import { fonts } from "@/theme/fonts";
 import { shadow } from "@/theme/shadow";
 import React from "react";
@@ -18,6 +19,7 @@ type TodayTargetCardProps = {
   unit: string;
   image: ImageSourcePropType;
   width?: DimensionValue;
+  isGoalSet?: boolean;
 };
 
 const TodayTargetCard = ({
@@ -27,6 +29,7 @@ const TodayTargetCard = ({
   unit,
   image,
   width = "80%",
+  isGoalSet,
 }: TodayTargetCardProps) => {
   const targetNum = parseFloat(target);
   const valueNum = parseFloat(todayValue);
@@ -41,7 +44,23 @@ const TodayTargetCard = ({
         <View style={styles.textGroup}>
           <Text style={styles.type}>{typeTarget}</Text>
           <Text style={styles.value}>
-            {todayValue} / {target} {unit}
+            {isGoalSet === false ? (
+              <Text>
+                {todayValue} {unit}{" "}
+                {
+                  <Text
+                    style={{ ...fonts.bodyMedium, color: colors.tertiary3 }}
+                  >
+                    {" "}
+                    / No goal
+                  </Text>
+                }
+              </Text>
+            ) : (
+              <Text>
+                {todayValue} / {target} {unit}
+              </Text>
+            )}
           </Text>
         </View>
       </View>
@@ -55,7 +74,16 @@ const TodayTargetCard = ({
           backgroundColor="#eee"
           rotation={0}
         >
-          {(fill: number) => <Text style={styles.progressText}>{fill}%</Text>}
+          {(fill: number) => (
+            <Text
+              style={[
+                styles.progressText,
+                { color: isGoalSet == false ? "black" : "#4CAF50" },
+              ]}
+            >
+              {isGoalSet === false ? "N/A" : `${fill.toFixed(1)}%`}
+            </Text>
+          )}
         </AnimatedCircularProgress>
       </View>
     </View>
@@ -98,7 +126,6 @@ const styles = StyleSheet.create({
   },
   progressText: {
     ...fonts.bodyMedium,
-    color: "#4CAF50",
   },
 });
 

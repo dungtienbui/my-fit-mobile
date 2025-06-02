@@ -241,6 +241,8 @@ const Sleep = () => {
         {/* DateTimePicker */}
         {showPicker && (
           <DateTimePicker
+            textColor="black"
+            themeVariant="light"
             value={targetField === "startTime" ? startTime : endTime}
             mode="time"
             is24Hour={true}

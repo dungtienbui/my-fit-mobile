@@ -165,7 +165,7 @@ const AddBodyMeasurement = () => {
   }, [saveError]);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <ScreenTitle
         title="Add Calories"
         LeadingIconButton={
@@ -323,6 +323,8 @@ const AddBodyMeasurement = () => {
         {/* DateTimePicker */}
         {showPicker && (
           <DateTimePicker
+            textColor="black"
+            themeVariant="light"
             value={targetField === "measureDate" ? measureDate : measureTime}
             mode={mode}
             is24Hour={true}
