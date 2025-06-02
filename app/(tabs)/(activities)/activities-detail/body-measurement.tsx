@@ -1,31 +1,41 @@
 import IconButton from "@/components/button/IconButton";
 import RecordCard from "@/components/card/RecordCard";
 import ScreenTitle from "@/components/screen/ScreenTitle";
-import { useGetHealthMetricsByDateRangeAndTypeQuery } from "@/store/services/apis/healthMetricsApi";
+import {
+  useDeleteHealthMetricMutation,
+  useGetHealthMetricsByDateRangeAndTypeQuery,
+} from "@/store/services/apis/healthMetricsApi";
 import { HealthMetricResponseDto } from "@/store/services/dto/response/healthMetricsResponseDto";
 import { colors } from "@/theme/colors";
 import { fonts } from "@/theme/fonts";
+import { formatWeekRangeConditional } from "@/utils/dateTimeUtils";
 import { Ionicons } from "@expo/vector-icons";
 import {
+  addWeeks,
   endOfWeek,
   format,
   isToday,
   isYesterday,
   parseISO,
   startOfWeek,
+  subWeeks,
 } from "date-fns";
 import { router } from "expo-router";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Platform,
   Pressable,
   SafeAreaView,
   SectionList,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
+import ActionSheet, { SheetManager } from "react-native-actions-sheet";
+import Toast from "react-native-toast-message";
 
 type SectionData = {
   title: string;
@@ -37,11 +47,26 @@ const BodyMeasurementScreen = () => {
     "height"
   );
 
-  const { weekStart, weekEnd } = useMemo(() => {
-    const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
-    const weekEnd = endOfWeek(new Date(), { weekStartsOn: 1 });
-    return { weekStart, weekEnd };
-  }, []);
+  const [weekStart, setWeekStart] = useState(
+    startOfWeek(new Date(), { weekStartsOn: 1 })
+  );
+  const [weekEnd, setWeekEnd] = useState(
+    endOfWeek(new Date(), { weekStartsOn: 1 })
+  );
+
+  const goToPreviousWeek = () => {
+    const prevStart = subWeeks(weekStart, 1);
+    const prevEnd = endOfWeek(prevStart, { weekStartsOn: 1 });
+    setWeekStart(prevStart);
+    setWeekEnd(prevEnd);
+  };
+
+  const goToNextWeek = () => {
+    const nextStart = addWeeks(weekStart, 1);
+    const nextEnd = endOfWeek(nextStart, { weekStartsOn: 1 });
+    setWeekStart(nextStart);
+    setWeekEnd(nextEnd);
+  };
 
   const [dataHeightRender, setHeightDataRender] = useState<SectionData[]>([]);
   const [dataWeightRender, setWeightDataRender] = useState<SectionData[]>([]);
@@ -118,6 +143,45 @@ const BodyMeasurementScreen = () => {
     }
   }, [heightError, weightError]);
 
+  const [
+    deleteRecord,
+    { data: deleteData, isLoading: deleteLoading, error: deleteError },
+  ] = useDeleteHealthMetricMutation();
+
+  useEffect(() => {
+    if (deleteError) {
+      if (deleteError) {
+        Toast.show({
+          text1: "Ooh!",
+          text2: "Some wrong happended. Please try again!",
+          type: "error",
+        });
+        console.log("deleteError: ", deleteError);
+      }
+    }
+  }, [deleteError]);
+
+  useEffect(() => {
+    if (deleteData) {
+      if (deleteData) {
+        Toast.show({
+          text1: "Success",
+          text2: "Your record has deleted successfully.",
+          type: "success",
+        });
+        console.log("deleteData: ", deleteData);
+      }
+    }
+  }, [deleteData]);
+
+  const [selectedItem, setSelectedItem] =
+    useState<HealthMetricResponseDto | null>(null);
+
+  const handleLongPress = (item: any) => {
+    setSelectedItem(item);
+    SheetManager.show("delete-sheet");
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       {/* Header */}
@@ -147,14 +211,33 @@ const BodyMeasurementScreen = () => {
       {/* Progress tuần */}
       <View style={styles.progressWrapper}>
         <View style={styles.weekNav}>
-          <Ionicons name="chevron-back" size={30} color={colors.primary1} />
+          <Pressable
+            onPress={() => {
+              goToPreviousWeek();
+            }}
+          >
+            <Ionicons name="chevron-back" size={30} color={colors.primary1} />
+          </Pressable>
           {(typeMeasurement === "height" && heightLoading) ||
-          (typeMeasurement === "weight" && weightLoading) ? (
+          (typeMeasurement === "weight" && weightLoading) ||
+          deleteLoading ? (
             <ActivityIndicator />
           ) : (
-            <Text style={styles.thisWeek}>This week</Text>
+            <Text style={styles.thisWeek}>
+              {formatWeekRangeConditional(weekStart)}
+            </Text>
           )}
-          <Ionicons name="chevron-forward" size={30} color={colors.primary1} />
+          <Pressable
+            onPress={() => {
+              goToNextWeek();
+            }}
+          >
+            <Ionicons
+              name="chevron-forward"
+              size={30}
+              color={colors.primary1}
+            />
+          </Pressable>
         </View>
         <View style={styles.tabContainer}>
           <Pressable
@@ -255,6 +338,7 @@ const BodyMeasurementScreen = () => {
         keyExtractor={(item, index) => item.date + index}
         renderItem={({ item }) => (
           <RecordCard
+            onLongPress={() => handleLongPress(item)}
             value={
               typeMeasurement === "height"
                 ? `${item.value.toString()} cm`
@@ -284,6 +368,65 @@ const BodyMeasurementScreen = () => {
           </View>
         }
       />
+
+      <ActionSheet
+        id="delete-sheet"
+        gestureEnabled={true}
+        containerStyle={{
+          height: 250,
+        }}
+      >
+        <View style={styles.sheetContainer}>
+          <Text style={styles.sheetTitle}>Options</Text>
+          <TouchableOpacity
+            style={styles.sheetButton}
+            onPress={() => {
+              Alert.alert(
+                "Alert!",
+                "Do you want to delete this record?",
+                [
+                  {
+                    text: "Cancel",
+                    style: "cancel",
+                  },
+                  {
+                    text: "Delete",
+                    onPress: () => {
+                      if (selectedItem) {
+                        deleteRecord({ id: selectedItem._id });
+                      }
+                    },
+                    style: "destructive",
+                  },
+                ],
+                { cancelable: true }
+              );
+
+              SheetManager.hide("delete-sheet");
+            }}
+          >
+            <Text
+              style={{ color: "red", ...fonts.bodyLarge, textAlign: "center" }}
+            >
+              Delete
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.sheetButton}
+            onPress={() => SheetManager.hide("delete-sheet")}
+          >
+            <Text
+              style={{
+                color: "#038aff",
+                ...fonts.bodyLarge,
+                textAlign: "center",
+              }}
+            >
+              Cancel
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ActionSheet>
     </SafeAreaView>
   );
 };
@@ -372,5 +515,20 @@ const styles = StyleSheet.create({
   },
   tabTextSelected: {
     color: colors.secondary2,
+  },
+  sheetContainer: {
+    padding: 10,
+  },
+  sheetTitle: {
+    ...fonts.titleMedium,
+    textAlign: "center",
+    borderBottomWidth: 1,
+    paddingVertical: 10,
+    borderBottomColor: colors.tertiary3,
+    marginBottom: 20,
+  },
+  sheetButton: {
+    paddingVertical: 10,
+    marginBottom: 10,
   },
 });

@@ -2,13 +2,21 @@
 import { fonts } from "@/theme/fonts";
 import { shadow } from "@/theme/shadow";
 import React from "react";
-import { DimensionValue, StyleSheet, Text, View } from "react-native";
+import {
+  DimensionValue,
+  GestureResponderEvent,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 type RecordCardProps = {
   value: string;
   datetime: string;
   recordType: string;
   width?: DimensionValue;
+  onLongPress?: ((event: GestureResponderEvent) => void) | undefined;
 };
 
 const RecordCard = ({
@@ -16,15 +24,20 @@ const RecordCard = ({
   datetime,
   recordType,
   width = "80%",
+  onLongPress,
 }: RecordCardProps) => {
   return (
-    <View style={[styles.card, { width: width }, shadow.shap]}>
+    <TouchableOpacity
+      onLongPress={onLongPress}
+      activeOpacity={0.65}
+      style={[styles.card, { width: width }, shadow.shap]}
+    >
       <View style={styles.leadingTextContainer}>
         <Text style={styles.type}>{recordType}</Text>
         <Text style={styles.datetime}>{datetime}</Text>
       </View>
       <Text style={styles.value}>{value}</Text>
-    </View>
+    </TouchableOpacity>
   );
 };
 

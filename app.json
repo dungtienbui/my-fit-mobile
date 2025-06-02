@@ -9,14 +9,19 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.myfitorganization.myfitmobile",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.myfitorganization.myfitmobile"
     },
     "web": {
       "bundler": "metro",
@@ -49,8 +54,15 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "080491fe-db62-4082-99ce-74796cf4d941"
+        "projectId": "38d4b196-7ea4-420f-a6ee-dd716088e250"
       }
+    },
+    "owner": "my-fit-organization",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/38d4b196-7ea4-420f-a6ee-dd716088e250"
     }
   }
 }
