@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "myFIT",
+    "name": "MyFIT",
     "slug": "my-fit-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -15,10 +15,14 @@
         "ITSAppUsesNonExemptEncryption": false
       }
     },
+    "notification": {
+      "icon": "./assets/notifications/notification-icon.png",
+      "color": "#EBFFCA"
+    },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#F7FFEA"
       },
       "edgeToEdgeEnabled": true,
       "package": "com.myfitorganization.myfitmobile"
@@ -36,7 +40,7 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#F7FFEA"
         }
       ],
       [

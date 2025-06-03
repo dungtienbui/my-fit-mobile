@@ -18,6 +18,7 @@ import {
   Text,
   View,
 } from "react-native";
+import Toast from "react-native-toast-message";
 import { useDispatch } from "react-redux";
 
 export default function Login() {
@@ -45,6 +46,26 @@ export default function Login() {
       saveToken(result.access_token);
       router.replace("/(tabs)/(home)");
     } catch (err) {
+      const { data } = err as {
+        data: { error: string; message: string; statusCode: number };
+        status: number;
+      };
+      if (
+        data.message === "Password incorrect" ||
+        data.message === "Email not found"
+      ) {
+        Toast.show({
+          text1: "Ooh!",
+          text2: "The email or password is incorrect!",
+          type: "error",
+        });
+      } else {
+        Toast.show({
+          text1: "Ooh!",
+          text2: "A wrong happended when login. Please try again!",
+          type: "error",
+        });
+      }
       console.error("Đăng nhập thất bại:", err);
     }
   };

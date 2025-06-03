@@ -32,7 +32,7 @@ export default function Onboarding() {
         loop={false}
         showsPagination={true}
         autoplay
-        autoplayTimeout={2}
+        autoplayTimeout={3}
         activeDotColor={colors.primary1}
         paginationStyle={{ marginBottom: 30 }}
       >
@@ -98,7 +98,7 @@ export default function Onboarding() {
             onPress={handleFinish}
             style={[styles.button, isHovered && styles.hovered]} // Áp dụng style khi hover hoặc nhấn
           >
-            <Text style={styles.buttonText}>Bắt đầu ngay!</Text>
+            <Text style={styles.buttonText}>Start now!</Text>
           </Pressable>
         </ImageBackground>
       </Swiper>

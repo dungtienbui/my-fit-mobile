@@ -231,13 +231,13 @@ const SleppScreen = () => {
           </Pressable>
         </View>
         <View style={styles.progressBox}>
-          <Text style={styles.progressText}>
+          {/* <Text style={styles.progressText}>
             <Text style={styles.checkedDayNumber}>
               {dateChecked.reduce((acc, curr) => acc + (curr ? 1 : 0), 0)}
             </Text>{" "}
             of <Text style={styles.checkedDayNumber}>5</Text> exercise days to
             goal
-          </Text>
+          </Text> */}
           <View style={styles.daysRow}>
             {DaysOfWeek.map((dayName, idx) => (
               <View key={idx} style={{ alignItems: "center", gap: 5 }}>

@@ -3,7 +3,6 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "preinstall": "npx npm-force-resolutions",
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
@@ -56,7 +55,6 @@
     "react-native-swiper": "^1.6.0",
     "react-native-toast-message": "^2.3.0",
     "react-native-vector-icons": "^10.2.0",
-    "react-native-web": "^0.20.0",
     "react-native-webview": "13.13.5",
     "react-redux": "^9.2.0",
     "redux-persist": "^6.0.0",
@@ -74,8 +72,5 @@
     "react-native-make": "^1.0.1",
     "typescript": "~5.8.3"
   },
-  "private": true,
-  "resolutions": {
-    "promise": "8.3.0"
-  }
+  "private": true
 }

@@ -10,15 +10,12 @@
     },
     "preview": {
       "distribution": "internal",
-      "env": {
-        "SENTRY_AUTH_TOKEN": "YOUR_SENTRY_AUTH_TOKEN"
+      "android": {
+        "buildType": "apk"
       }
     },
     "production": {
-      "autoIncrement": true,
-      "env": {
-        "SENTRY_AUTH_TOKEN": "YOUR_SENTRY_AUTH_TOKEN"
-      }
+      "autoIncrement": true
     }
   },
   "submit": {
