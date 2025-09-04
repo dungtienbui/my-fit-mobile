@@ -1,8 +1,15 @@
 # Ứng dụng Theo dõi sức khoẻ cá nhân MyFIT - mobile
 - Video demo: [Youtube](https://youtu.be/XupRC6AAEog)
-- Poster của ứng dụng: [Google Drive](https://drive.google.com/file/d/11eADe0TC758x3zWZojXcAupUkgRalEmz/view?usp=sharing)
+- Poster của ứng dụng: [Google Drive](https://drive.google.com/file/d/1-HcyowByU3k948NIIauCAKmEhH2BcaTO/view?usp=share_link)
 - Thiết kế UI: [Figma](https://www.figma.com/design/7XqMMT0mAhirM4dgv4J6sm/MobileApp---MyFIT?node-id=3403-11465&t=6lOF2QOcav40b6fr-1)
 - Showcase: [Behance](https://www.behance.net/gallery/224003853/Personal-Health-Tracking-App-MyFIT)
+- Báo cáo của nhóm: [Google Drive](https://drive.google.com/file/d/1ZhggTPPlR6E1N46jh7H7N6XrDR6vdBPo/view?usp=share_link)
+
+# Thành viên và vai trò
+1. Tiến Dũng - Leader (Me)
+3. Hải Đăng
+4. Ngô Khang
+5. Minh Khang
 
 # Công nghệ sử dụng
 1. Thiết kế: Figma, Behance
